@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "root",
+    "password": "4000Qkslsl!",
+    "database": "homepage_dev",
+    "host": "13.59.12.13",
+    "dialect": "mysql",
+    "operatorsAliases": false
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "operatorsAliases": false
+  },
+  "production": {
+    "username": "root",
+    "password": "4000Qkslsl!",
+    "database": "hompage_prod",
+    "host": "13.59.12.13",
+    "dialect": "mysql",
+    "operatorsAliases": false
+  }
+}
