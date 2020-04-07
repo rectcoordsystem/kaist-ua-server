@@ -2,7 +2,7 @@ const Koa = require("koa");
 const app = new Koa();
 const bodyParser = require("koa-body");
 
-const router = require("./routes");
+const router = require("./src/routes");
 
 const PORT = 8080;
 
