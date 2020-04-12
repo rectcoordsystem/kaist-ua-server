@@ -3,10 +3,22 @@ module.exports = (sequelize, DataTypes) => {
   const bulletin = sequelize.define(
     "Bulletins",
     {
-      title: DataTypes.STRING,
-      description: DataTypes.STRING,
+      title: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
     },
-    {}
+    {
+      underscored: true,
+      freezeTableName: true,
+      tableName: "bulletin",
+      charset: "utf8",
+      collate: "utf8_general_ci",
+    }
   );
   bulletin.associate = function (models) {
     // associations can be defined here

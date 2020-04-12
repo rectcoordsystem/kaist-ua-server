@@ -10,12 +10,19 @@ module.exports = {
       },
       title: {
         type: Sequelize.STRING,
+        allowNull: false,
+      },
+      author: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       content: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       views: {
         type: Sequelize.INTEGER,
+        allowNull: false,
       },
       // bulletinId: {
       //   type: Sequelize.INTEGER,
