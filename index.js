@@ -1,14 +1,26 @@
 const Koa = require("koa");
-const app = new Koa();
 const bodyParser = require("koa-body");
-
+const cors = require("@koa/cors");
+const logger = require("koa-logger");
 const router = require("./src/routes");
 
-const PORT = 8080;
+const run = async () => {
+  const app = new Koa();
+  const corsOptions = {
+    origin: "http://localhost:3000", // 허락하고자 하는 요청 주소
+    credentials: true, // true로 하면 설정한 내용을 response 헤더에 추가 해줍니다.
+  };
 
-//app.use(bodyParser);
-app.use(router.routes());
+  app.use(cors(corsOptions));
+  app.use(logger());
+  app.use(bodyParser());
+  app.use(router.routes());
 
-app.listen(PORT, () => {
-  console.log(`Server running at port ${PORT}`);
-});
+  const PORT = 8080;
+
+  app.listen(PORT, () => {
+    console.log(`Server running at port ${PORT}`);
+  });
+};
+
+run();
