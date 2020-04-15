@@ -1,83 +1,107 @@
-let postId = 1;
-const posts = [];
+const models = require("../../database/models");
 
 /**
  * POST /posts
  * {title, author, content, views}
  */
-exports.write = (ctx) => {
+exports.write = async (ctx) => {
   const { title, author, content, views } = ctx.request.body;
   const post = {
-    id: postId,
     title: title,
     author: author,
     content: content,
     views: views,
   };
-  posts.push(post);
-  ctx.body = post;
+  await models.Posts.create(post)
+    .then((res) => {
+      console.log("포스트 업로드 성공!");
+      ctx.body = res;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 /**
  * GET /posts
  */
 
-exports.list = (ctx) => {
-  ctx.body = posts;
+exports.list = async (ctx) => {
+  await models.Posts.findAll()
+    .then((res) => {
+      ctx.body = res;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 /**
  * GET /posts/:id
  */
 
-exports.read = (ctx) => {
+exports.read = async (ctx) => {
   const { id } = ctx.params;
-  const post = posts.find((post) => post.id.toString() === id);
-  if (!post) {
-    ctx.status = 404;
-    ctx.body = {
-      message: "포스트가 존재하지 않습니다.",
-    };
-    return;
-  }
-  ctx.body = post;
+
+  await models.Posts.findOne({
+    where: { id: id },
+  })
+    .then((res) => {
+      ctx.body = res;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 /**
  * DELETE /posts/:id
  */
 
-exports.remove = (ctx) => {
+exports.remove = async (ctx) => {
   const { id } = ctx.params;
-  const index = posts.findIndex((post) => post.id.toString() === id);
-  if (index === -1) {
-    ctx.status = 404;
-    ctx.body = {
-      message: "포스트가 존재하지 않습니다.",
-    };
-    return;
-  }
-  posts.splice(index, 1);
-  ctx.status = 204;
+
+  await models.Posts.destroy({
+    where: { id: id },
+  })
+    .then((res) => {
+      if (!res) {
+        ctx.status = 404;
+        ctx.body = {
+          message: "포스트가 존재하지 않습니다.",
+        };
+      } else {
+        console.log("포스트 삭제 성공!");
+        ctx.status = 204;
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 /**
  * PATCH /posts/:id
  * {title, (author), content, (views)}
  */
-exports.update = (ctx) => {
+exports.update = async (ctx) => {
   const { id } = ctx.params;
-  const index = posts.findIndex((post) => post.id.toString === id);
-  if (index === -1) {
-    ctx.status = 404;
-    ctx.body = {
-      message: "포스트가 존재하지 않습니다.",
-    };
-    return;
-  }
-  posts[index] = {
-    ...posts[index],
-    ...ctx.request.body,
+  const { title, author, content, views } = ctx.request.body;
+  const post = {
+    title: title,
+    author: author,
+    content: content,
+    views: views,
   };
-  ctx.body = posts[index];
+
+  await models.Posts.update(post, {
+    where: { id: id },
+  })
+    .then((res) => {
+      ctx.body = post;
+      console.log("포스트 업데이트 성공!");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };

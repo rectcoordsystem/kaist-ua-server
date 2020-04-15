@@ -1,6 +1,6 @@
-const models = require("../../database/models");
 const Router = require("koa-router");
 const banners = new Router();
+const bannersCtrl = require("./banners.ctrl");
 
 const printInfo = (ctx) => {
   ctx.body = {
@@ -10,18 +10,8 @@ const printInfo = (ctx) => {
   };
 };
 
-banners.get("/", async (ctx) => {
-  await models.Banners.findAll()
-    .then((banners) => {
-      ctx.body = { banners };
-    })
-    .catch((err) => {
-      ctx.body = `error: ${err}`;
-    });
-});
-
-banners.post("/", printInfo);
-banners.delete("/", printInfo);
-banners.put("/", printInfo);
+banners.get("/", bannersCtrl.list);
+banners.post("/", bannersCtrl.upload);
+banners.delete("/:id", bannersCtrl.remove);
 
 module.exports = banners;

@@ -1,43 +1,61 @@
-let bannerId = 1;
-const banners = [];
+const models = require("../../database/models");
 
 /**
  * POST /banners
  * {url}
  */
-exports.upload = (ctx) => {
-  const { utl } = ctx.request.url;
+exports.upload = async (ctx) => {
+  const { url } = ctx.request.body;
   const banner = {
-    id: bannerId,
     url: url,
   };
-  bannerId += 1;
-  banners.push(banner);
-  ctx.body = banner;
+  await models.Banners.create(banner)
+    .then((res) => {
+      console.log("배너 추가 성공!");
+      ctx.body = res;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 /**
  *  GET /banners
  */
 
-exports.list = (ctx) => {
-  ctx.body = banners;
+exports.list = async (ctx) => {
+  await models.Banners.findAll()
+    .then((res) => {
+      ctx.body = res;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 /**
  * DELETE /banners/:id
  */
 
-exports.remove = (ctx) => {
+exports.remove = async (ctx) => {
   const { id } = ctx.params;
-  const index = banners.findIndex((banner) => banner.id.toString === id);
-  if (index === -1) {
-    ctx.status = 404;
-    ctx.body = {
-      message: "포스트가 존재하지 않습니다.",
-    };
-    return;
-  }
-  banners.splice(index, 1);
-  ctx.status = 204;
+
+  await models.Banners.destroy({
+    where: { id: id },
+  })
+    .then((res) => {
+      //number
+      if (!res) {
+        ctx.status = 404;
+        ctx.body = {
+          message: "배너가 존재하지 않습니다.",
+        };
+      } else {
+        console.log("배너 삭제 성공!");
+        ctx.status = 204;
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
