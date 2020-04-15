@@ -13,4 +13,19 @@ router.get("/banners", async (ctx) => {
     });
 });
 
+router.post("/post", async (req, res) => {
+  await models.Posts.create({
+    title: req.body.title,
+    author: req.body.author,
+    content: req.body.content,
+    views: req.content.views,
+  })
+    .then((result) => {
+      console.log("New Post Created");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
 module.exports = router;
