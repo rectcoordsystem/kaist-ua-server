@@ -7,7 +7,6 @@ module.exports = {
       [
         {
           url: "http://bitly.kr/TDZyC8p2",
-          idx: 0,
         },
       ],
       {}

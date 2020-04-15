@@ -4,7 +4,6 @@ module.exports = (sequelize, DataTypes) => {
     "Banners",
     {
       url: DataTypes.STRING,
-      idx: DataTypes.INTEGER,
     },
     {
       underscored: true,
