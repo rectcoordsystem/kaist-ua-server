@@ -45,6 +45,8 @@ exports.list = async (ctx) => {
       [Op.like]: `%${title}%`,
     };
 
+  var body = {};
+
   await models.Posts.findAll({
     order: [["createdAt", "DESC"]],
     offset: offset,
@@ -52,7 +54,7 @@ exports.list = async (ctx) => {
     where: where,
   })
     .then((res) => {
-      ctx.body = res;
+      body.posts = res;
     })
     .catch((err) => {
       console.log(err);
@@ -62,11 +64,13 @@ exports.list = async (ctx) => {
     where: where,
   })
     .then((res) => {
-      ctx.set("Last-Page", Math.ceil(res / POST_NUM_PER_PAGE));
+      body.lastPage = Math.ceil(res / POST_NUM_PER_PAGE);
     })
     .catch((err) => {
       console.log(err);
     });
+
+  ctx.body = body;
 };
 
 /**
