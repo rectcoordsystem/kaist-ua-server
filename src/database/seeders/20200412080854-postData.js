@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert(
-      "Posts",
+      "post",
       [
         {
           title: "[제휴] <욱카>, 학기당 500회 사용 가능",
@@ -17,6 +17,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete("Posts", null, {});
+    return queryInterface.bulkDelete("post", null, {});
   },
 };

@@ -25,7 +25,7 @@ const run = async () => {
   app.use(cors(corsOptions));
   app.use(logger());
   app.use(bodyParser());
-  app.use(router.routes());
+  app.use(router.routes()).use(router.allowedMethods());
 
   const PORT = 8080;
 

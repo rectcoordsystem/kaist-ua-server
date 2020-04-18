@@ -11,9 +11,6 @@ module.exports = {
       url: {
         type: Sequelize.STRING,
       },
-      idx: {
-        type: Sequelize.INTEGER,
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

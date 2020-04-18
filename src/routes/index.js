@@ -1,16 +1,11 @@
 const Router = require("koa-router");
-const models = require("../database/models");
+
+const posts = require("./posts");
+const banners = require("./banners");
 
 const router = new Router();
 
-router.get("/banners", async (ctx) => {
-  await models.Banners.findAll()
-    .then((banners) => {
-      ctx.body = { banners };
-    })
-    .catch((err) => {
-      ctx.body = `error: ${err}`;
-    });
-});
+router.use("/posts", posts.routes());
+router.use("/banners", banners.routes());
 
 module.exports = router;
