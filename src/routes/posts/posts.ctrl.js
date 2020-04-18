@@ -1,4 +1,5 @@
 const models = require("../../database/models");
+const Op = require("sequelize").Op;
 
 /**
  * POST /posts
@@ -26,13 +27,50 @@ exports.write = async (ctx) => {
  */
 
 exports.list = async (ctx) => {
-  await models.Posts.findAll()
+  const { page, title, author } = ctx.request.query;
+  const POST_NUM_PER_PAGE = 3;
+
+  if (page < 1) {
+    ctx.status = 400;
+    return;
+  }
+
+  const offset = POST_NUM_PER_PAGE * (page - 1);
+
+  var where = {};
+
+  if (author) where.author = author;
+  if (title)
+    where.title = {
+      [Op.like]: `%${title}%`,
+    };
+
+  var body = {};
+
+  await models.Posts.findAll({
+    order: [["createdAt", "DESC"]],
+    offset: offset,
+    limit: POST_NUM_PER_PAGE,
+    where: where,
+  })
     .then((res) => {
-      ctx.body = res;
+      body.posts = res;
     })
     .catch((err) => {
       console.log(err);
     });
+
+  await models.Posts.count({
+    where: where,
+  })
+    .then((res) => {
+      body.lastPage = Math.ceil(res / POST_NUM_PER_PAGE);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  ctx.body = body;
 };
 
 /**
