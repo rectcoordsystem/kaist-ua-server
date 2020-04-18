@@ -5,12 +5,11 @@ const models = require("../../database/models");
  * {title, author, content, views}
  */
 exports.write = async (ctx) => {
-  const { title, author, content, views } = ctx.request.body;
+  const { title, author, content } = ctx.request.body;
   const post = {
     title: title,
     author: author,
     content: content,
-    views: views,
   };
   await models.Posts.create(post)
     .then((res) => {

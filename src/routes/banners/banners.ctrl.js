@@ -26,7 +26,8 @@ exports.upload = async (ctx) => {
 exports.list = async (ctx) => {
   await models.Banners.findAll()
     .then((res) => {
-      ctx.body = res;
+      const banners = res;
+      ctx.body = banners;
     })
     .catch((err) => {
       console.log(err);
