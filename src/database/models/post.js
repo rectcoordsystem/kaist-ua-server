@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 0,
       },
       bulletinId: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
     },

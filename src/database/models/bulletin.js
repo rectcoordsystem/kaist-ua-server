@@ -4,9 +4,10 @@ module.exports = (sequelize, DataTypes) => {
     "bulletin",
     {
       id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
+        type: DataTypes.INTEGER,
       },
       title: {
         type: DataTypes.TEXT,
