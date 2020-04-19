@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       email: DataTypes.STRING,
       password: DataTypes.STRING,
-      accessToken: {
+      access_token: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },

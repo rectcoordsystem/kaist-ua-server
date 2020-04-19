@@ -9,31 +9,31 @@ var genRandomString = function (length) {
 };
 
 /**
- * GET /admin
+ * POST /admins/login
  * {email, password}
  */
 exports.login = async (ctx) => {
   const { email, password } = ctx.request.body;
-  const res = await models.admin.findOne({ email });
+  const res = await models.admin.findOne({ where: { email } });
   const hash = crypto.createHmac("sha512", res.salt);
   hash.update(password);
   const value = hash.digest("hex");
   if (value === res.password) {
     ctx.body = {
       email: res.email,
-      accessToken: res.accessToken,
+      accessToken: res.access_token,
     };
   }
 };
 
 /**
- *  POST /admin
+ *  POST /admins/register
  *  {email, password}
  */
 
 exports.register = async (ctx) => {
   const { email, password } = ctx.request.body;
-  const res = await models.admin.findOne({ email });
+  const res = await models.admin.findOne({ where: { email } });
   if (res) return;
   var salt = genRandomString(16);
   const hash = crypto.createHmac("sha512", salt);
