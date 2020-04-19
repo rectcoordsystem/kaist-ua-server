@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
   const bulletin = sequelize.define(
-    "Bulletins",
+    "bulletin",
     {
       title: {
         type: DataTypes.TEXT,
@@ -20,8 +20,10 @@ module.exports = (sequelize, DataTypes) => {
       collate: "utf8_general_ci",
     }
   );
+
   bulletin.associate = function (models) {
-    // associations can be defined here
+    models.bulletin.hasMany(models.post);
   };
+
   return bulletin;
 };

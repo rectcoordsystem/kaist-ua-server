@@ -11,7 +11,8 @@ exports.open = async (ctx) => {
     title: title,
     description: description,
   };
-  await models.Bulletins.create(bulletin)
+  await models.bulletin
+    .create(bulletin)
     .then((res) => {
       console.log("게시판 오픈 성공!");
       ctx.body = res;
@@ -26,7 +27,8 @@ exports.open = async (ctx) => {
  */
 
 exports.list = async (ctx) => {
-  await models.Bulletins.findAll()
+  await models.bulletin
+    .findAll()
     .then((res) => {
       const bulletins = res;
       ctx.body = bulletins;
@@ -43,19 +45,21 @@ exports.list = async (ctx) => {
 exports.close = async (ctx) => {
   const { id } = ctx.params;
 
-  await models.Bulletins.destroy({
-    where: { id: id },
-  }).then((res) => {
-    if (!res) {
-      ctx.status = 404;
-      ctx.body = {
-        message: "게시판이 존재하지 않습니다!",
-      };
-    } else {
-      console.log("게시판 삭제 성공!");
-      ctx.status = 204;
-    }
-  });
+  await models.bulletin
+    .destroy({
+      where: { id: id },
+    })
+    .then((res) => {
+      if (!res) {
+        ctx.status = 404;
+        ctx.body = {
+          message: "게시판이 존재하지 않습니다!",
+        };
+      } else {
+        console.log("게시판 삭제 성공!");
+        ctx.status = 204;
+      }
+    });
 };
 
 /**
@@ -70,9 +74,10 @@ exports.reopen = async (ctx) => {
     description: description,
   };
 
-  await models.Bulletins.update(bulletin, {
-    where: { id: id },
-  })
+  await models.bulletin
+    .update(bulletin, {
+      where: { id: id },
+    })
     .then((res) => {
       ctx.body = bulletin;
       console.log("게시판 업데이트 성공!");
