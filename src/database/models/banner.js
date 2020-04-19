@@ -3,12 +3,17 @@ module.exports = (sequelize, DataTypes) => {
   const banner = sequelize.define(
     "banner",
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
       url: DataTypes.STRING,
     },
     {
       underscored: true,
+      paranoid: true,
       freezeTableName: true,
-      tableName: "banner",
       charset: "utf8",
       collate: "utf8_general_ci",
     }

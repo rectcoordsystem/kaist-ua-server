@@ -3,6 +3,11 @@ module.exports = (sequelize, DataTypes) => {
   const post = sequelize.define(
     "post",
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
       title: {
         type: DataTypes.TEXT,
         allowNull: false,
@@ -20,14 +25,14 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 0,
       },
       bulletinId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
       },
     },
     {
       underscored: true,
       freezeTableName: true,
-      tableName: "post",
+      paranoid: true,
       charset: "utf8",
       collate: "utf8_general_ci",
     }

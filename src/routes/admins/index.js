@@ -10,7 +10,7 @@ const printInfo = (ctx) => {
   };
 };
 
-admins.post("/:email", adminsCtrl.register);
-admins.post("/", adminsCtrl.login);
+admins.get("/", adminsCtrl.login);
+admins.post("/", adminsCtrl.post);
 
 module.exports = admins;

@@ -3,15 +3,23 @@ module.exports = (sequelize, DataTypes) => {
   const admin = sequelize.define(
     "admin",
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
       email: DataTypes.STRING,
       password: DataTypes.STRING,
-      accessToken: DataTypes.UUID,
+      accessToken: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
       salt: DataTypes.STRING,
     },
     {
       underscored: true,
       freezeTableName: true,
-      tableName: "admin",
+      paranoid: true,
       charset: "utf8",
       collate: "utf8_general_ci",
     }

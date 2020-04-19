@@ -1,35 +1,43 @@
 const models = require("../../database/models");
+const crypto = require("crypto");
 
-/**
- * POST /login
- * {url}
- */
-exports.upload = async (ctx) => {
-  const { url } = ctx.request.body;
-  const banner = {
-    url: url,
-  };
-  await models.Banners.create(banner)
-    .then((res) => {
-      console.log("배너 추가 성공!");
-      ctx.body = res;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+var genRandomString = function (length) {
+  return crypto
+    .randomBytes(Math.ceil(length / 2))
+    .toString("hex") /** convert to hexadecimal format */
+    .slice(0, length); /** return required number of characters */
 };
 
 /**
- *  POST /register/email
+ * GET /admin
+ * {email, password}
+ */
+exports.login = async (ctx) => {
+  const { email, password } = ctx.request.body;
+  const res = await models.admin.findOne({ email });
+  const hash = crypto.createHmac("sha512", res.salt);
+  hash.update(password);
+  const value = hash.digest("hex");
+  if (value === res.password) {
+    ctx.body = {
+      email: res.email,
+      accessToken: res.accessToken,
+    };
+  }
+};
+
+/**
+ *  POST /admin
+ *  {email, password}
  */
 
-exports.list = async (ctx) => {
-  await models.Banners.findAll()
-    .then((res) => {
-      const banners = res;
-      ctx.body = banners;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+exports.register = async (ctx) => {
+  const { email, password } = ctx.request.body;
+  const res = await models.admin.findOne({ email });
+  if (res) return;
+  var salt = genRandomString(16);
+  const hash = crypto.createHmac("sha512", salt);
+  hash.update(password);
+  const value = hash.digest("hex");
+  ctx.body = await models.admin.create({ email, salt, password: value });
 };
