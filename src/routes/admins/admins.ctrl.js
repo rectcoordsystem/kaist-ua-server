@@ -15,14 +15,21 @@ var genRandomString = function (length) {
 exports.login = async (ctx) => {
   const { email, password } = ctx.request.body;
   const res = await models.admin.findOne({ where: { email } });
-  const hash = crypto.createHmac("sha512", res.salt);
-  hash.update(password);
-  const value = hash.digest("hex");
-  if (value === res.password) {
+  if (!res) {
+    ctx.status = 404;
     ctx.body = {
-      email: res.email,
-      accessToken: res.access_token,
+      message: "로그인 실패!",
     };
+  } else {
+    const hash = crypto.createHmac("sha512", res.salt);
+    hash.update(password);
+    const value = hash.digest("hex");
+    if (value === res.password) {
+      ctx.body = {
+        email: res.email,
+        accessToken: res.access_token,
+      };
+    }
   }
 };
 
