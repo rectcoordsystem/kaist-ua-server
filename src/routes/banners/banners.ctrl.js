@@ -9,7 +9,8 @@ exports.upload = async (ctx) => {
   const banner = {
     url: url,
   };
-  await models.Banners.create(banner)
+  await models.banner
+    .create(banner)
     .then((res) => {
       console.log("배너 추가 성공!");
       ctx.body = res;
@@ -24,7 +25,8 @@ exports.upload = async (ctx) => {
  */
 
 exports.list = async (ctx) => {
-  await models.Banners.findAll()
+  await models.banner
+    .findAll()
     .then((res) => {
       const banners = res;
       ctx.body = banners;
@@ -41,9 +43,10 @@ exports.list = async (ctx) => {
 exports.remove = async (ctx) => {
   const { id } = ctx.params;
 
-  await models.Banners.destroy({
-    where: { id: id },
-  })
+  await models.banner
+    .destroy({
+      where: { id: id },
+    })
     .then((res) => {
       //number
       if (!res) {
