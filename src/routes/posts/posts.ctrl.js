@@ -86,10 +86,12 @@ exports.read = async (ctx) => {
 
   await models.post
     .findOne({
-      where: { id: id },
+      where: { id },
     })
     .then((res) => {
       ctx.body = res;
+
+      models.post.update({ views: res.views + 1 }, { where: { id } });
     })
     .catch((err) => {
       console.log(err);
