@@ -6,7 +6,10 @@ module.exports = {
       "banner",
       [
         {
+          id: 1,
           url: "http://bitly.kr/TDZyC8p2",
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
       ],
       {}

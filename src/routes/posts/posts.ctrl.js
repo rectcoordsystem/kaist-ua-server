@@ -6,13 +6,15 @@ const Op = require("sequelize").Op;
  * {title, author, content, views}
  */
 exports.write = async (ctx) => {
-  const { title, author, content } = ctx.request.body;
+  const { title, author, content, bulletinId } = ctx.request.body;
   const post = {
     title: title,
     author: author,
     content: content,
+    bulletinId: parseInt(bulletinId),
   };
-  await models.Posts.create(post)
+  await models.post
+    .create(post)
     .then((res) => {
       console.log("포스트 업로드 성공!");
       ctx.body = res;
@@ -27,8 +29,8 @@ exports.write = async (ctx) => {
  */
 
 exports.list = async (ctx) => {
-  const { page, title, author } = ctx.request.query;
-  const POST_NUM_PER_PAGE = 3;
+  const { page, title, author, bulletinId } = ctx.request.query;
+  const POST_NUM_PER_PAGE = 15;
 
   if (page < 1) {
     ctx.status = 400;
@@ -37,7 +39,7 @@ exports.list = async (ctx) => {
 
   const offset = POST_NUM_PER_PAGE * (page - 1);
 
-  var where = {};
+  var where = { bulletinId: parseInt(bulletinId) };
 
   if (author) where.author = author;
   if (title)
@@ -47,12 +49,13 @@ exports.list = async (ctx) => {
 
   var body = {};
 
-  await models.Posts.findAll({
-    order: [["createdAt", "DESC"]],
-    offset: offset,
-    limit: POST_NUM_PER_PAGE,
-    where: where,
-  })
+  await models.post
+    .findAll({
+      order: [["created_at", "DESC"]],
+      offset: offset,
+      limit: POST_NUM_PER_PAGE,
+      where: where,
+    })
     .then((res) => {
       body.posts = res;
     })
@@ -60,9 +63,10 @@ exports.list = async (ctx) => {
       console.log(err);
     });
 
-  await models.Posts.count({
-    where: where,
-  })
+  await models.post
+    .count({
+      where: where,
+    })
     .then((res) => {
       body.lastPage = Math.ceil(res / POST_NUM_PER_PAGE);
     })
@@ -80,11 +84,14 @@ exports.list = async (ctx) => {
 exports.read = async (ctx) => {
   const { id } = ctx.params;
 
-  await models.Posts.findOne({
-    where: { id: id },
-  })
+  await models.post
+    .findOne({
+      where: { id },
+    })
     .then((res) => {
       ctx.body = res;
+
+      models.post.update({ views: res.views + 1 }, { where: { id } });
     })
     .catch((err) => {
       console.log(err);
@@ -98,9 +105,10 @@ exports.read = async (ctx) => {
 exports.remove = async (ctx) => {
   const { id } = ctx.params;
 
-  await models.Posts.destroy({
-    where: { id: id },
-  })
+  await models.post
+    .destroy({
+      where: { id: id },
+    })
     .then((res) => {
       if (!res) {
         ctx.status = 404;
@@ -131,9 +139,10 @@ exports.update = async (ctx) => {
     views: views,
   };
 
-  await models.Posts.update(post, {
-    where: { id: id },
-  })
+  await models.post
+    .update(post, {
+      where: { id: id },
+    })
     .then((res) => {
       ctx.body = post;
       console.log("포스트 업데이트 성공!");

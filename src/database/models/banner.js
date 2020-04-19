@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const Banner = sequelize.define(
-    "Banners",
+  const banner = sequelize.define(
+    "banner",
     {
       url: DataTypes.STRING,
     },
@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
       collate: "utf8_general_ci",
     }
   );
-  Banner.associate = function (models) {
+  banner.associate = function (models) {
     // associations can be defined here
   };
-  return Banner;
+  return banner;
 };
