@@ -9,6 +9,8 @@ const host = process.env.SERVER_HOST
   ? process.env.SERVER_HOST
   : "http://localhost";
 
+console.log(process.env);
+
 const run = async () => {
   const app = new Koa();
   const corsOptions = {
