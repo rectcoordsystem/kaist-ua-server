@@ -5,10 +5,14 @@ const logger = require("koa-logger");
 const router = require("./src/routes");
 const models = require("./src/database/models/index.js");
 
+const host = process.env.SERVER_HOST
+  ? process.env.SERVER_HOST
+  : "http://localhost";
+
 const run = async () => {
   const app = new Koa();
   const corsOptions = {
-    origin: "http://localhost:3000", // 허락하고자 하는 요청 주소
+    origin: `{host}:3000`, // 허락하고자 하는 요청 주소
     credentials: true, // true로 하면 설정한 내용을 response 헤더에 추가 해줍니다.
   };
 
