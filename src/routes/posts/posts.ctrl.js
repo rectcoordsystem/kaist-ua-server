@@ -39,7 +39,7 @@ exports.list = async (ctx) => {
 
   const offset = POST_NUM_PER_PAGE * (page - 1);
 
-  var where = { bulletinId: parseInt(bulletinId) };
+  var where = { bulletin_id: parseInt(bulletinId) };
 
   if (author) where.author = author;
   if (title)
@@ -57,6 +57,7 @@ exports.list = async (ctx) => {
       where: where,
     })
     .then((res) => {
+      if (!res) body.posts = res;
       body.posts = res;
     })
     .catch((err) => {

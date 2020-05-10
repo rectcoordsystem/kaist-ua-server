@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         defaultValue: 0,
       },
-      bulletinId: {
+      bulletin_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
 
   post.associate = function (models) {
     models.post.belongsTo(models.bulletin, {
-      foreignKey: "bulletinId",
+      foreignKey: "bulletin_id",
       onDelete: "cascade",
     });
   };
