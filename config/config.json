@@ -3,7 +3,7 @@
     "username": "root",
     "password": "4000Qkslsl!",
     "database": "homepage_dev",
-    "host": "13.59.12.13",
+    "host": "13.125.229.31",
     "dialect": "mysql",
     "operatorsAliases": false
   },
@@ -19,7 +19,7 @@
     "username": "root",
     "password": "4000Qkslsl!",
     "database": "hompage_prod",
-    "host": "13.59.12.13",
+    "host": "13.125.229.31",
     "dialect": "mysql",
     "operatorsAliases": false
   }
