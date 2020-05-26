@@ -7,6 +7,10 @@ const admins = require("./admins");
 
 const router = new Router();
 
+router.get("/hello", (ctx) => {
+  ctx.body = "hello";
+});
+
 router.use("/posts", posts.routes());
 router.use("/admins", admins.routes());
 router.use("/banners", banners.routes());
