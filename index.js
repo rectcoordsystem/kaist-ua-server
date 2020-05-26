@@ -7,7 +7,7 @@ const models = require("./src/database/models/index.js");
 
 const host = process.env.SERVER_HOST
   ? process.env.SERVER_HOST
-  : "http://localhost";
+  : "http://localhost/web/api";
 
 console.log(process.env);
 
