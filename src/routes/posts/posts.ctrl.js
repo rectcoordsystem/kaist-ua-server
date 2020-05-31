@@ -11,8 +11,9 @@ exports.write = async (ctx) => {
     title: title,
     author: author,
     content: content,
-    bulletinId: parseInt(bulletinId),
+    bulletin_id: parseInt(bulletinId),
   };
+  console.log(post);
   await models.post
     .create(post)
     .then((res) => {
