@@ -5,8 +5,8 @@ const logger = require("koa-logger");
 const router = require("./src/routes");
 const models = require("./src/database/models/index.js");
 
-const host = process.env.SERVER_HOST
-  ? process.env.SERVER_HOST
+const host = process.env.REACT_APP_HOST
+  ? process.env.REACT_APP_HOST
   : "http://localhost";
 
 console.log(process.env);
