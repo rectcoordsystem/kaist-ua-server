@@ -8,17 +8,17 @@ const env = process.env.NODE_ENV || "development";
 const db = {};
 
 let sequelize;
-if (env === "development") {
-  sequelize = new Sequelize(
-    process.env.DEVELOPMENT_DATABASE,
-    process.env.DEVELOPMENT_USERNAME,
-    process.env.DEVELOPMENT_PASSWORD,
-    {
-      host: process.env.DEVELOPMENT_HOST,
-      dialect: process.env.DIALECT,
-    }
-  );
-}
+// if (env === "development") {
+sequelize = new Sequelize(
+  process.env.DEVELOPMENT_DATABASE,
+  process.env.DEVELOPMENT_USERNAME,
+  process.env.DEVELOPMENT_PASSWORD,
+  {
+    host: process.env.DEVELOPMENT_HOST,
+    dialect: "mysql",
+  }
+);
+// }
 // if (config && config.use_env_variable) {
 //   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 // } else {
