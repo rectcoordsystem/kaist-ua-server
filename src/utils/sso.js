@@ -1,8 +1,8 @@
 const crypto = require("crypto");
 
 class Client {
-  getLoginParams() {
-    const state = crypto.randomBytes(10).toString("hex");
+  getLoginParams(str) {
+    const state = str.concat(",", crypto.randomBytes(10).toString("hex"));
     const params = {
       client_id: "KAIPEDIA",
       redirect_url: "https://student.kaist.ac.kr/web/main",
