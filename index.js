@@ -9,8 +9,6 @@ const host = process.env.REACT_APP_HOST
   ? process.env.REACT_APP_HOST
   : "http://localhost";
 
-console.log(process.env);
-
 const run = async () => {
   const app = new Koa();
 
