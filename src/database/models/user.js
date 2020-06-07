@@ -18,7 +18,6 @@ module.exports = (sequelize, DataTypes) => {
       ku_acad_name: DataTypes.STRING,
       ku_kname: DataTypes.STRING,
       user_id: DataTypes.STRING,
-      k_uid: DataTypes.STRING,
       access_token: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
