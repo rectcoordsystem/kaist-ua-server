@@ -1,13 +1,11 @@
+require("dotenv").config();
 const Koa = require("koa");
 const bodyParser = require("koa-body");
 const cors = require("@koa/cors");
 const logger = require("koa-logger");
 const router = require("./src/routes");
 const models = require("./src/database/models/index.js");
-
-const host = process.env.REACT_APP_HOST
-  ? process.env.REACT_APP_HOST
-  : "http://localhost";
+const helmet = require("koa-helmet");
 
 const run = async () => {
   const app = new Koa();
@@ -23,6 +21,7 @@ const run = async () => {
     });
 
   app.use(cors());
+  app.use(helmet());
   app.use(logger());
   app.use(bodyParser());
   app.use(router.routes()).use(router.allowedMethods());
