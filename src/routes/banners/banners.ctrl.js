@@ -5,9 +5,10 @@ const models = require("../../database/models");
  * {url}
  */
 exports.upload = async (ctx) => {
-  const { url } = ctx.request.body;
+  const { url, link } = ctx.request.body;
   const banner = {
     url: url,
+    link: link,
   };
   await models.banner
     .create(banner)
