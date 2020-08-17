@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       url: DataTypes.STRING,
+      link: DataTypes.STRING,
     },
     {
       underscored: true,
@@ -21,5 +22,6 @@ module.exports = (sequelize, DataTypes) => {
   banner.associate = function (models) {
     // associations can be defined here
   };
+  banner.sync({ force: true });
   return banner;
 };
