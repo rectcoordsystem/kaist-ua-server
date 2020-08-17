@@ -1,8 +1,22 @@
 const models = require("../../database/models");
 
-/**
- * POST /banners
- * {url}
+/** @swagger
+ *  /banners:
+ *    post:
+ *      summary: upload url to banner image and hyperlink
+ *      tags: [Banners]
+ *      parameters:
+ *        - $ref: "#/parameters/adminAuth@header"
+ *        - in: body
+ *          name: banner
+ *          schema:
+ *            type: object
+ *            properties:
+ *              url:
+ *                type: string
+ *              link:
+ *                type: string
+ *          required: true
  */
 exports.upload = async (ctx) => {
   const { url, link } = ctx.request.body;
@@ -21,10 +35,14 @@ exports.upload = async (ctx) => {
     });
 };
 
-/**
- *  GET /banners
+/** @swagger
+ *  /banners:
+ *    get:
+ *      summary: obtain all banners
+ *      tags: [Banners]
+ *      parameters:
+ *        - $ref: "#/parameters/adminAuth@header"
  */
-
 exports.list = async (ctx) => {
   await models.banner
     .findAll()
@@ -37,10 +55,19 @@ exports.list = async (ctx) => {
     });
 };
 
-/**
- * DELETE /banners/:id
+/** @swagger
+ *  /banners/{id}:
+ *    delete:
+ *      summary: delete banner by ID
+ *      tags: [Banners]
+ *      parameters:
+ *        - $ref: "#/parameters/adminAuth@header"
+ *        - in: path
+ *          name: id
+ *          schema:
+ *            type: string
+ *          required: true
  */
-
 exports.remove = async (ctx) => {
   const { id } = ctx.params;
 

@@ -8,9 +8,34 @@ var genRandomString = function (length) {
     .slice(0, length); /** return required number of characters */
 };
 
-/**
- * POST /admins/login
- * {email, password}
+/** @swagger
+ *  parameters:
+ *   adminAuth@header:
+ *     name: x-token
+ *     in: header
+ *     description: access token provided to admin
+ *     required: true
+ *     type: UUID
+ */
+
+/** @swagger
+ *  /admins/login:
+ *    post:
+ *      summary: obtain access token for admin
+ *      tags: [Admin]
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - in: body
+ *          name: admin
+ *          schema:
+ *            type: object
+ *            properties:
+ *              email:
+ *                type: string
+ *              password:
+ *                type: string
+ *          required: true
  */
 exports.login = async (ctx) => {
   const { email, password } = ctx.request.body;
@@ -37,7 +62,6 @@ exports.login = async (ctx) => {
  *  POST /admins/register
  *  {email, password}
  */
-
 exports.register = async (ctx) => {
   const { email, password } = ctx.request.body;
   const res = await models.admin.findOne({ where: { email } });

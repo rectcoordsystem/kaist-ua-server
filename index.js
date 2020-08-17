@@ -7,6 +7,8 @@ const router = require("./src/routes");
 const models = require("./src/database/models/index.js");
 const helmet = require("koa-helmet");
 const passport = require("koa-passport");
+const swagger = require("koa2-swagger-ui");
+const swaggerDoc = require("./src/utils/swaggerDef.js");
 
 const run = async () => {
   const app = new Koa();
@@ -28,6 +30,15 @@ const run = async () => {
   app.use(logger());
   app.use(bodyParser());
   app.use(router.routes()).use(router.allowedMethods());
+  app.use(
+    swagger({
+      routePrefix: "/swagger",
+      swaggerOptions: {
+        url: "/swagger.json",
+      },
+    })
+  );
+  app.use(swaggerDoc.routes());
 
   const PORT = 8080;
 
