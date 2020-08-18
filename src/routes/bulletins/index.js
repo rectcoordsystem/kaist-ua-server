@@ -8,11 +8,7 @@ bulletins.post(
   passport.authenticate("token", { session: false }),
   bulletinsCtrl.open
 );
-bulletins.get(
-  "/",
-  passport.authenticate("token", { session: false }),
-  bulletinsCtrl.list
-);
+bulletins.get("/", bulletinsCtrl.list);
 bulletins.delete(
   "/:id",
   passport.authenticate("token", { session: false }),
