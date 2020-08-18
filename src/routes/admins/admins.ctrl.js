@@ -11,12 +11,25 @@ var genRandomString = function (length) {
 
 /** @swagger
  *  parameters:
- *   adminAuth@header:
- *     name: x-token
- *     in: header
- *     description: access token provided to admin
- *     required: true
- *     type: UUID
+ *    adminAuth@header:
+ *      name: x-token
+ *      in: header
+ *      description: access token provided to admin
+ *      required: true
+ *      type: string
+ *      responses:
+ *        200:
+ *          description: Success
+ *        204:
+ *          description: No Content
+ *        400:
+ *          description: Bad Request
+ *        401:
+ *          description: Unauthorized
+ *        404:
+ *          description: Not Found
+ *        500:
+ *          description: Internal Server Error
  */
 
 /** @swagger
@@ -60,8 +73,7 @@ exports.login = async (ctx) => {
 };
 
 /**
- *  GET /admins/check
- *  {email, password}
+ *  GET /admins/check?access_token
  */
 exports.check = async (ctx) => {
   const url = new URLSearchParams(ctx.url.split("?")[1]);

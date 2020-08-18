@@ -17,6 +17,19 @@ const models = require("../../database/models");
  *              link:
  *                type: string
  *          required: true
+ *      responses:
+ *        200:
+ *          description: Success
+ *        204:
+ *          description: No Content
+ *        400:
+ *          description: Bad Request
+ *        401:
+ *          description: Unauthorized
+ *        404:
+ *          description: Not Found
+ *        500:
+ *          description: Internal Server Error
  */
 exports.upload = async (ctx) => {
   const { url, link } = ctx.request.body;
@@ -40,6 +53,19 @@ exports.upload = async (ctx) => {
  *    get:
  *      summary: obtain all banners
  *      tags: [Banners]
+ *      responses:
+ *        200:
+ *          description: Success
+ *        204:
+ *          description: No Content
+ *        400:
+ *          description: Bad Request
+ *        401:
+ *          description: Unauthorized
+ *        404:
+ *          description: Not Found
+ *        500:
+ *          description: Internal Server Error
  */
 exports.list = async (ctx) => {
   await models.banner
@@ -65,6 +91,19 @@ exports.list = async (ctx) => {
  *          schema:
  *            type: string
  *          required: true
+ *      responses:
+ *        200:
+ *          description: Success
+ *        204:
+ *          description: No Content
+ *        400:
+ *          description: Bad Request
+ *        401:
+ *          description: Unauthorized
+ *        404:
+ *          description: Not Found
+ *        500:
+ *          description: Internal Server Error
  */
 exports.remove = async (ctx) => {
   const { id } = ctx.params;
