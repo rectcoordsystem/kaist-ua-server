@@ -1,5 +1,6 @@
 const models = require("../../database/models");
 const crypto = require("crypto");
+const { access } = require("fs");
 
 var genRandomString = function (length) {
   return crypto
@@ -55,6 +56,26 @@ exports.login = async (ctx) => {
         accessToken: res.access_token,
       };
     }
+  }
+};
+
+/**
+ *  GET /admins/check
+ *  {email, password}
+ */
+exports.check = async (ctx) => {
+  const url = new URLSearchParams(ctx.url.split("?")[1]);
+  const res = await models.admin.findOne({
+    where: { access_token: url.get("access_token") },
+  });
+  if (!res) {
+    ctx.body = {
+      access: false,
+    };
+  } else {
+    ctx.body = {
+      access: true,
+    };
   }
 };
 

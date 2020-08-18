@@ -11,6 +11,7 @@ const printInfo = (ctx) => {
 };
 
 admins.post("/login", adminsCtrl.login);
+admins.get("/check", adminsCtrl.check);
 admins.post("/register", adminsCtrl.register);
 
 module.exports = admins;
