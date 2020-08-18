@@ -40,8 +40,6 @@ exports.upload = async (ctx) => {
  *    get:
  *      summary: obtain all banners
  *      tags: [Banners]
- *      parameters:
- *        - $ref: "#/parameters/adminAuth@header"
  */
 exports.list = async (ctx) => {
   await models.banner
