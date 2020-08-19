@@ -47,9 +47,38 @@ var genRandomString = function (length) {
  *            properties:
  *              email:
  *                type: string
+ *                format: email
  *              password:
  *                type: string
  *          required: true
+ *      responses:
+ *        200:
+ *          description: Success
+ *          schema:
+ *            type: object
+ *            properties:
+ *              email:
+ *                type: string
+ *                format: email
+ *              accessToken:
+ *                type: string
+ *                format: uuid
+ *        204:
+ *          description: No Content
+ *        400:
+ *          description: Bad Request
+ *        401:
+ *          description: Unauthorized
+ *        404:
+ *          description: Not Found (Failed to login)
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message:
+ *                type: string
+ *                example: 로그인 실패!
+ *        500:
+ *          description: Internal Server Error
  */
 exports.login = async (ctx) => {
   const { email, password } = ctx.request.body;
@@ -72,8 +101,36 @@ exports.login = async (ctx) => {
   }
 };
 
-/**
- *  GET /admins/check?access_token
+/** @swagger
+ *  /admins/check:
+ *    get:
+ *      summary: return whether access_token is admin's access_token
+ *      tags: [Admin]
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - in: query
+ *          name: access_token
+ *          schema:
+ *            type: string
+ *      responses:
+ *        200:
+ *          description: Success
+ *          schema:
+ *            type: object
+ *            properties:
+ *              access:
+ *                type: boolean
+ *        204:
+ *          description: No Content
+ *        400:
+ *          description: Bad Request
+ *        401:
+ *          description: Unauthorized
+ *        404:
+ *          description: Not Found
+ *        500:
+ *          description: Internal Server Error
  */
 exports.check = async (ctx) => {
   const url = new URLSearchParams(ctx.url.split("?")[1]);
@@ -91,9 +148,60 @@ exports.check = async (ctx) => {
   }
 };
 
-/**
- *  POST /admins/register
- *  {email, password}
+/** @swagger
+ *  /admins/register:
+ *    post:
+ *      summary: add admin account
+ *      tags: [Admin]
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - in: body
+ *          name: admin
+ *          schema:
+ *            type: object
+ *            properties:
+ *              email:
+ *                type: string
+ *                format: email
+ *              password:
+ *                type: string
+ *          required: true
+ *      responses:
+ *        200:
+ *          description: Success
+ *          schema:
+ *            type: object
+ *            properties:
+ *              id:
+ *                type: string
+ *                format: uuid
+ *              access_token:
+ *                type: string
+ *                format: uuid
+ *              email:
+ *                type: string
+ *                format: email
+ *              salt:
+ *                type: string
+ *              password:
+ *                type: string
+ *              updated_at:
+ *                type: string
+ *                format: date-time
+ *              created_at:
+ *                type: string
+ *                format: date-time
+ *        204:
+ *          description: No Content
+ *        400:
+ *          description: Bad Request
+ *        401:
+ *          description: Unauthorized
+ *        404:
+ *          description: Not Found
+ *        500:
+ *          description: Internal Server Error
  */
 exports.register = async (ctx) => {
   const { email, password } = ctx.request.body;
