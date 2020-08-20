@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 module.exports = (sequelize, DataTypes) => {
   const post = sequelize.define(
-    "post",
+    'post',
     {
       id: {
         type: DataTypes.UUID,
@@ -33,15 +33,15 @@ module.exports = (sequelize, DataTypes) => {
       underscored: true,
       freezeTableName: true,
       paranoid: true,
-      charset: "utf8",
-      collate: "utf8_general_ci",
-    }
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
+    },
   );
 
   post.associate = function (models) {
     models.post.belongsTo(models.bulletin, {
-      foreignKey: "bulletin_id",
-      onDelete: "cascade",
+      foreignKey: 'bulletin_id',
+      onDelete: 'cascade',
     });
   };
 

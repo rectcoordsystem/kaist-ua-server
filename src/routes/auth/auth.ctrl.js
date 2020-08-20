@@ -1,16 +1,16 @@
-const models = require("../../database/models");
-const SSOClient = require("../../utils/sso");
-const { parseJSON } = require("../../utils");
+const models = require('../../database/models');
+const SSOClient = require('../../utils/sso');
+const { parseJSON } = require('../../utils');
 
 exports.login = async (ctx) => {
-  const { url, state } = SSOClient.getLoginParams("login");
+  const { url, state } = SSOClient.getLoginParams('login');
   //ctx.request.state = ctx.request.header.referrer; //요청을 보낸곳의 url
   //ctx.response.session.state = state;
   ctx.redirect(url);
 };
 
 exports.register = async (ctx) => {
-  const { url, state } = SSOClient.getLoginParams("register");
+  const { url, state } = SSOClient.getLoginParams('register');
   //ctx.request.session.state = state;
   ctx.redirect(url);
 };
@@ -34,12 +34,12 @@ exports.signUp = async (ctx) => {
     where: { kaist_uid: userData.kaist_uid },
   });
 
-  const path = state.split(",")[0];
+  const path = state.split(',')[0];
 
-  if (path == "login") {
+  if (path == 'login') {
     if (!user) {
       //login 시도 + DB에 저장된 정보 없을시 -> 개인정보 처리 동의 화면으로 Redirect
-      ctx.redirect("https://student.kaist.ac.kr/web/auth/agreement");
+      ctx.redirect('https://student.kaist.ac.kr/web/auth/agreement');
     } else {
       //login 시도 + DB에 저장된 정보 있을시 -> 유저 정보 업데이트 후, 로그인 성공
       //메인 화면으로 redirect
@@ -54,9 +54,9 @@ exports.signUp = async (ctx) => {
         access_token: user.access_token,
       };
 
-      ctx.redirect("https://student.kaist.ac.kr/web/main");
+      ctx.redirect('https://student.kaist.ac.kr/web/main');
     }
-  } else if (path == "register") {
+  } else if (path == 'register') {
     //register 시도 + DB에 저장된 정보 없을시
     //user DB에 저장하고 메인 화면으로 redirect! 로그인 성공!
     if (!user) {
@@ -68,19 +68,19 @@ exports.signUp = async (ctx) => {
         access_token: registeredUser.access_token,
       };
 
-      ctx.redirect("https://student.kaist.ac.kr/web/main");
+      ctx.redirect('https://student.kaist.ac.kr/web/main');
     } else {
       console.log(user);
       ctx.body = {
         user: userData,
         access_token: user.access_token,
-        message: "이미 가입한 적 있는 회원입니다!",
+        message: '이미 가입한 적 있는 회원입니다!',
       };
 
-      ctx.redirect("https://student.kaist.ac.kr/web/main");
+      ctx.redirect('https://student.kaist.ac.kr/web/main');
     }
   } else {
-    console.error("WRONG STATE!");
+    console.error('WRONG STATE!');
   }
 };
 

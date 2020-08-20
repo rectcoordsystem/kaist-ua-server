@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 module.exports = (sequelize, DataTypes) => {
   const bulletin = sequelize.define(
-    "bulletin",
+    'bulletin',
     {
       id: {
         allowNull: false,
@@ -22,9 +22,9 @@ module.exports = (sequelize, DataTypes) => {
       underscored: true,
       freezeTableName: true,
       paranoid: true,
-      charset: "utf8",
-      collate: "utf8_general_ci",
-    }
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
+    },
   );
 
   bulletin.associate = function (models) {
