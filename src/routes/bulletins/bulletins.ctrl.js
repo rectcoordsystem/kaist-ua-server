@@ -1,4 +1,4 @@
-const models = require("../../database/models");
+const models = require('../../database/models');
 
 /**
  * POST /bulletins
@@ -14,7 +14,7 @@ exports.open = async (ctx) => {
   await models.bulletin
     .create(bulletin)
     .then((res) => {
-      console.log("게시판 오픈 성공!");
+      console.log('게시판 오픈 성공!');
       ctx.body = res;
     })
     .catch((err) => {
@@ -53,10 +53,10 @@ exports.close = async (ctx) => {
       if (!res) {
         ctx.status = 404;
         ctx.body = {
-          message: "게시판이 존재하지 않습니다!",
+          message: '게시판이 존재하지 않습니다!',
         };
       } else {
-        console.log("게시판 삭제 성공!");
+        console.log('게시판 삭제 성공!');
         ctx.status = 204;
       }
     });
@@ -80,7 +80,7 @@ exports.reopen = async (ctx) => {
     })
     .then((res) => {
       ctx.body = bulletin;
-      console.log("게시판 업데이트 성공!");
+      console.log('게시판 업데이트 성공!');
     })
     .catch((err) => {
       console.log(err);

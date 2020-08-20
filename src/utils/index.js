@@ -1,5 +1,5 @@
 const parseJSON = (jsonString, fallback = {}) => {
-  if (typeof jsonString === "object") {
+  if (typeof jsonString === 'object') {
     return jsonString;
   }
 

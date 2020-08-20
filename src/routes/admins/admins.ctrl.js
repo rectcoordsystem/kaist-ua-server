@@ -1,11 +1,11 @@
-const models = require("../../database/models");
-const crypto = require("crypto");
-const { access } = require("fs");
+const models = require('../../database/models');
+const crypto = require('crypto');
+const { access } = require('fs');
 
 var genRandomString = function (length) {
   return crypto
     .randomBytes(Math.ceil(length / 2))
-    .toString("hex") /** convert to hexadecimal format */
+    .toString('hex') /** convert to hexadecimal format */
     .slice(0, length); /** return required number of characters */
 };
 
@@ -57,12 +57,12 @@ exports.login = async (ctx) => {
   if (!res) {
     ctx.status = 404;
     ctx.body = {
-      message: "로그인 실패!",
+      message: '로그인 실패!',
     };
   } else {
-    const hash = crypto.createHmac("sha512", res.salt);
+    const hash = crypto.createHmac('sha512', res.salt);
     hash.update(password);
-    const value = hash.digest("hex");
+    const value = hash.digest('hex');
     if (value === res.password) {
       ctx.body = {
         email: res.email,
@@ -76,9 +76,9 @@ exports.login = async (ctx) => {
  *  GET /admins/check?access_token
  */
 exports.check = async (ctx) => {
-  const url = new URLSearchParams(ctx.url.split("?")[1]);
+  const url = new URLSearchParams(ctx.url.split('?')[1]);
   const res = await models.admin.findOne({
-    where: { access_token: url.get("access_token") },
+    where: { access_token: url.get('access_token') },
   });
   if (!res) {
     ctx.body = {
@@ -100,8 +100,8 @@ exports.register = async (ctx) => {
   const res = await models.admin.findOne({ where: { email } });
   if (res) return;
   var salt = genRandomString(16);
-  const hash = crypto.createHmac("sha512", salt);
+  const hash = crypto.createHmac('sha512', salt);
   hash.update(password);
-  const value = hash.digest("hex");
+  const value = hash.digest('hex');
   ctx.body = await models.admin.create({ email, salt, password: value });
 };
