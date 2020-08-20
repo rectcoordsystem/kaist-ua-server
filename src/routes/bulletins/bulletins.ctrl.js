@@ -7,6 +7,7 @@ const models = require("../../database/models");
  *      summary: open bulletin
  *      tags: [Bulletins]
  *      parameters:
+ *        - $ref: "#/parameters/adminAuth@header"
  *        - in: body
  *          name: bulletin
  *          schema:
@@ -20,6 +21,21 @@ const models = require("../../database/models");
  *      responses:
  *        200:
  *          description: Success
+ *          schema:
+ *            type: object
+ *            properties:
+ *              id:
+ *                type: integer
+ *              title:
+ *                type: string
+ *              description:
+ *                type: string
+ *              updated_at:
+ *                type: string
+ *                format: date-time
+ *              created_at:
+ *                type: string
+ *                format: date-time
  *        204:
  *          description: No Content
  *        400:
@@ -108,6 +124,7 @@ exports.list = async (ctx) => {
  *      summary: delete bulletin by ID
  *      tags: [Bulletins]
  *      parameters:
+ *        - $ref: "#/parameters/adminAuth@header"
  *        - in: path
  *          name: id
  *          schema:
@@ -117,13 +134,19 @@ exports.list = async (ctx) => {
  *        200:
  *          description: Success
  *        204:
- *          description: No Content
+ *          description: No Content (successfully removed)
  *        400:
  *          description: Bad Request
  *        401:
  *          description: Unauthorized
  *        404:
- *          description: Not Found
+ *          description: Not Found (bulletin doesn't exist)
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message:
+ *                type: string
+ *                example: 게시판이 존재하지 않습니다!
  *        500:
  *          description: Internal Server Error
  */
@@ -153,6 +176,7 @@ exports.close = async (ctx) => {
  *      summary: update title or description of bulletin
  *      tags: [Bulletins]
  *      parameters:
+ *        - $ref: "#/parameters/adminAuth@header"
  *        - in: path
  *          name: id
  *          schema:
@@ -171,6 +195,13 @@ exports.close = async (ctx) => {
  *      responses:
  *        200:
  *          description: Success
+ *          schema:
+ *            type: object
+ *            properties:
+ *              title:
+ *                type: string
+ *              description:
+ *                type: string
  *        204:
  *          description: No Content
  *        400:
