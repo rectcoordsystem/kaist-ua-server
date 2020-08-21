@@ -24,7 +24,6 @@ exports.generateToken = async (payload) => {
   } catch (e) {
     ctx.throw(500, e);
   }
-  console.log(token);
   return token;
 };
 
