@@ -9,10 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       ku_std_no: DataTypes.STRING,
-      kaist_uid: {
-        type: DataTypes.STRING,
-        primaryKey: true,
-      },
+      kaist_uid: DataTypes.STRING,
       ku_employee_number: DataTypes.STRING,
       displayname: DataTypes.STRING,
       ku_acad_name: DataTypes.STRING,
