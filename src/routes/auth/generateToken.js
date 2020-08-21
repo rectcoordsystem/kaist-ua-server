@@ -17,5 +17,14 @@ function generateToken(payload) {
     },
   );
 };
-exports.generateToken = generateToken;
+exports.generateToken = async (payload) => {
+  let token = null;
+  try {
+    token = await generateToken(payload);
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+  console.log(token);
+  return token;
+};
 
