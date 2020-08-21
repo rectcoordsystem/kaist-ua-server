@@ -4,7 +4,7 @@ const posts = require('./posts');
 const banners = require('./banners');
 const bulletins = require('./bulletins');
 const admins = require('./admins');
-const auth = require('./auth');
+const auth = require('./auth_archive');
 
 const router = new Router();
 
