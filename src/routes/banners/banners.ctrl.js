@@ -1,4 +1,4 @@
-const models = require("../../database/models");
+const models = require('../../database/models');
 
 /** @swagger
  *  /banners:
@@ -40,7 +40,7 @@ exports.upload = async (ctx) => {
   await models.banner
     .create(banner)
     .then((res) => {
-      console.log("배너 추가 성공!");
+      console.log('배너 추가 성공!');
       ctx.body = res;
     })
     .catch((err) => {
@@ -117,10 +117,10 @@ exports.remove = async (ctx) => {
       if (!res) {
         ctx.status = 404;
         ctx.body = {
-          message: "배너가 존재하지 않습니다.",
+          message: '배너가 존재하지 않습니다.',
         };
       } else {
-        console.log("배너 삭제 성공!");
+        console.log('배너 삭제 성공!');
         ctx.status = 204;
       }
     })
