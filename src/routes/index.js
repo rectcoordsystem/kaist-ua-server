@@ -5,6 +5,7 @@ const banners = require("./banners");
 const bulletins = require("./bulletins");
 const admins = require("./admins");
 const auth = require("./auth");
+const cancelRequest = require("./cancelRequest");
 
 const router = new Router();
 
@@ -17,5 +18,6 @@ router.use("/posts", posts.routes());
 router.use("/admins", admins.routes());
 router.use("/banners", banners.routes());
 router.use("/bulletins", bulletins.routes());
+router.use("/cancelRequest", cancelRequest.routes());
 
 module.exports = router;

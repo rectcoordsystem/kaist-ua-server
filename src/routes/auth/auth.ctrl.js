@@ -10,9 +10,8 @@ exports.login = async (ctx) => {
 };
 
 exports.register = async (ctx) => {
-  const { url, state } = SSOClient.getLoginParams("register");
-  //ctx.request.session.state = state;
-  ctx.redirect(url);
+  const body = ctx.request.body;
+  await models.user.create(body);
 };
 
 exports.signUp = async (ctx) => {
