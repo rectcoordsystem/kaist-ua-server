@@ -20,6 +20,22 @@ const models = require('../../database/models');
  *      responses:
  *        200:
  *          description: Success
+ *          schema:
+ *            type: object
+ *            properties:
+ *              id:
+ *                type: string
+ *                format: uuid
+ *              url:
+ *                type: string
+ *              link:
+ *                type: string
+ *              updated_at:
+ *                type: string
+ *                format: date-time
+ *              created_at:
+ *                type: string
+ *                format: date-time
  *        204:
  *          description: No Content
  *        400:
@@ -56,6 +72,28 @@ exports.upload = async (ctx) => {
  *      responses:
  *        200:
  *          description: Success
+ *          schema:
+ *            type: array
+ *            items:
+ *              type: object
+ *              properties:
+ *                id:
+ *                  type: string
+ *                  format: uuid
+ *                url:
+ *                  type: string
+ *                link:
+ *                  type: string
+ *                updated_at:
+ *                  type: string
+ *                  format: date-time
+ *                created_at:
+ *                  type: string
+ *                  format: date-time
+ *                deleted_at:
+ *                  type: string
+ *                  format: date-time
+ *                  nullable: true
  *        204:
  *          description: No Content
  *        400:
@@ -95,13 +133,19 @@ exports.list = async (ctx) => {
  *        200:
  *          description: Success
  *        204:
- *          description: No Content
+ *          description: No Content (successfully removed)
  *        400:
  *          description: Bad Request
  *        401:
  *          description: Unauthorized
  *        404:
- *          description: Not Found
+ *          description: Not Found (failed to remove)
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message:
+ *                type: string
+ *                example: 배너가 존재하지 않습니다.
  *        500:
  *          description: Internal Server Error
  */
