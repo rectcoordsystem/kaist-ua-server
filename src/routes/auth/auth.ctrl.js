@@ -1,43 +1,36 @@
-const models = require('../../database/models');
-const { generateToken } = require('./generateToken');
+const models = require("../../database/models");
+const { generateToken } = require("./generateToken");
+const e = require("cors");
 
-exports.login = async (ctx) => {
-  const { k_uid, user_info } = ctx.request.body;
-  const account = await models.user.findOne({ where: { kaist_uid: k_uid } });
-
-  const updatedAccount = {
-    ku_std_no: user_info.ku_std_n || null,
-    ku_employee_number: user_info.ku_employee_number || null,
-    displayname: user_info.displayname || null,
-    ku_acad_name: user_info.ku_acad_name || null,
-    ku_kname: user_info.ku_kname || null,
-  }
-  if (account) {
-    await models.user.update(updatedAccount, { where: { id: account.id } })
-
-    const token = await generateToken({ id: account.id });
-
-    ctx.cookies.set('access_token', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
-    ctx.body = account;
+exports.signup = async (ctx) => {
+  const { USER_INFO, state } = JSON.parse(ctx.request.body.result).dataMap;
+  var record = await models.user.findOne({ where: USER_INFO });
+  if (record || state === process.env.REGISTER_KEY) {
+    if (!record) {
+      console.log("REGISTER");
+      record = await models.user.create(USER_INFO);
+    } else {
+      console.log("LOGIN");
+    }
+    const token = await generateToken({ id: record.id });
+    ctx.cookies.set("access_token", token, {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      overwrite: true,
+    });
+    ctx.redirect(`${process.env.WEB_FRONTEND}/web/main`);
   } else {
-    ctx.status = 403;
-    return;
+    console.log("AGREEMENT");
+    ctx.redirect(`${process.env.WEB_FRONTEND}/web/auth/agreement/login`);
   }
 };
 
-exports.register = async (ctx) => {
-  const { k_uid, user_info } = ctx.request.body;
-  const userData = {
-    kaist_uid: k_uid,
-    ku_std_no: user_info.ku_std_n || null,
-    ku_employee_number: user_info.ku_employee_number || null,
-    displayname: user_info.displayname || null,
-    ku_acad_name: user_info.ku_acad_name || null,
-    ku_kname: user_info.ku_kname || null,
-  };
-  const user = await models.user.create(userData);
-  const token = await generateToken({ id: user.id });
+exports.logout = async (ctx) => {
+  ctx.cookies.set("access_token", "", { overwrite: true });
+  ctx.response.status = 200;
+};
 
-  ctx.cookies.set('access_token', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
-  ctx.body = user;
-}
+exports.checkUser = async (ctx) => {
+  const { id } = ctx.request.user;
+  const user = await models.user.findOne({ where: { id } });
+  ctx.response.body = { auth: user ? "user" : false };
+};
