@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 module.exports = (sequelize, DataTypes) => {
   const user = sequelize.define(
-    'user',
+    "user",
     {
       id: {
         type: DataTypes.UUID,
@@ -9,27 +9,19 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       ku_std_no: DataTypes.STRING,
-      kaist_uid: {
-        type: DataTypes.STRING,
-        primaryKey: true,
-      },
+      kaist_uid: DataTypes.STRING,
       ku_employee_number: DataTypes.STRING,
       displayname: DataTypes.STRING,
       ku_acad_name: DataTypes.STRING,
       ku_kname: DataTypes.STRING,
-      user_id: DataTypes.STRING,
-      access_token: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-      },
     },
     {
       underscored: true,
       freezeTableName: true,
       paranoid: true,
-      charset: 'utf8',
-      collate: 'utf8_general_ci',
-    },
+      charset: "utf8",
+      collate: "utf8_general_ci",
+    }
   );
   user.associate = function (models) {
     // associations can be defined here
