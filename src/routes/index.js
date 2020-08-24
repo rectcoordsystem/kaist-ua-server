@@ -1,5 +1,6 @@
 const Router = require('koa-router');
 
+const payment = require('./payment');
 const posts = require('./posts');
 const banners = require('./banners');
 const bulletins = require('./bulletins');
@@ -17,5 +18,6 @@ router.use('/posts', posts.routes());
 router.use('/admins', admins.routes());
 router.use('/banners', banners.routes());
 router.use('/bulletins', bulletins.routes());
+router.use('/payment', payment.routes());
 
 module.exports = router;
