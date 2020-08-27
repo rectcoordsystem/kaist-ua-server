@@ -149,7 +149,7 @@ exports.login = async (ctx) => {
  */
 exports.check = async (ctx) => {
   if (!ctx.request.user) {
-    ctx.status = 404;
+    ctx.status = 200;
     ctx.body = {
       message: "Unauthorized admin",
       auth: false,
