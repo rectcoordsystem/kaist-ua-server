@@ -9,6 +9,7 @@ const helmet = require("koa-helmet");
 const passport = require("koa-passport");
 const swagger = require("koa2-swagger-ui");
 const swaggerDoc = require("./src/utils/swaggerDef.js");
+const { jwtMiddleware } = require("./src/utils");
 
 const run = async () => {
   const app = new Koa();
@@ -23,12 +24,13 @@ const run = async () => {
       console.log(err);
     });
 
-  app.use(cors());
+  app.use(cors({ credentials: true }));
   app.use(helmet());
   app.use(passport.initialize());
   require("./src/config/accesstoken-strategy.js");
   app.use(logger());
   app.use(bodyParser());
+  app.use(jwtMiddleware);
   app.use(router.routes()).use(router.allowedMethods());
   app.use(
     swagger({

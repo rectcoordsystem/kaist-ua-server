@@ -1,6 +1,6 @@
-const Router = require("koa-router");
+const Router = require('koa-router');
 const banners = new Router();
-const bannersCtrl = require("./banners.ctrl");
+const bannersCtrl = require('./banners.ctrl');
 
 const printInfo = (ctx) => {
   ctx.body = {
@@ -10,8 +10,8 @@ const printInfo = (ctx) => {
   };
 };
 
-banners.get("/", bannersCtrl.list);
-banners.post("/", bannersCtrl.upload);
-banners.delete("/:id", bannersCtrl.remove);
+banners.get('/', bannersCtrl.list);
+banners.post('/', bannersCtrl.upload);
+banners.delete('/:id', bannersCtrl.remove);
 
 module.exports = banners;

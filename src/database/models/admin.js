@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 module.exports = (sequelize, DataTypes) => {
   const admin = sequelize.define(
-    "admin",
+    'admin',
     {
       id: {
         type: DataTypes.UUID,
@@ -20,9 +20,9 @@ module.exports = (sequelize, DataTypes) => {
       underscored: true,
       freezeTableName: true,
       paranoid: true,
-      charset: "utf8",
-      collate: "utf8_general_ci",
-    }
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
+    },
   );
   admin.associate = function (models) {
     // associations can be defined here

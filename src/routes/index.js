@@ -1,4 +1,4 @@
-const Router = require("koa-router");
+const Router = require('koa-router');
 
 const posts = require("./posts");
 const banners = require("./banners");
@@ -9,8 +9,8 @@ const cancelRequest = require("./cancelRequest");
 
 const router = new Router();
 
-router.get("/hello", (ctx) => {
-  ctx.body = "hello";
+router.get('/hello', (ctx) => {
+  ctx.body = 'hello';
 });
 
 router.use("/auth", auth.routes());
