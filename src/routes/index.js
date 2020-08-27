@@ -6,6 +6,7 @@ const bulletins = require("./bulletins");
 const admins = require("./admins");
 const auth = require("./auth");
 const payments = require("./payments");
+const cancelRequest = require("./cancelRequest");
 
 const router = new Router();
 
@@ -19,5 +20,6 @@ router.use("/admins", admins.routes());
 router.use("/banners", banners.routes());
 router.use("/bulletins", bulletins.routes());
 router.use("/payments", payments.routes());
+router.use("/cancelRequest", cancelRequest.routes());
 
 module.exports = router;
