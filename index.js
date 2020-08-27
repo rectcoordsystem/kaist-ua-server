@@ -23,7 +23,7 @@ const run = async () => {
       console.log(err);
     });
 
-  app.use(cors({ credentials: true }));
+  app.use(cors({ credentials: true, origin: process.env.ORIGIN }));
   app.use(helmet());
   app.use(logger());
   app.use(bodyParser());

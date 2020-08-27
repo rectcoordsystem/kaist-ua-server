@@ -27,7 +27,26 @@ exports.logout = async (ctx) => {
 };
 
 exports.check = async (ctx) => {
-  const { id } = ctx.request.user;
-  const user = await models.user.findOne({ where: { id } });
-  ctx.response.body = { auth: user ? "user" : false };
+  if (!ctx.request.user) {
+    ctx.status = 200;
+    ctx.body = {
+      message: "Unauthorized user",
+      auth: false,
+    };
+  } else {
+    const { id } = ctx.request.user;
+    const user = await models.user.findOne({ where: { id } });
+    if (!user) {
+      ctx.status = 200;
+      ctx.body = {
+        message: "Unauthorized user",
+        auth: false,
+      };
+    } else {
+      ctx.body = {
+        auth: user ? "user" : false,
+        name: user.ku_kname || user.displayname,
+      };
+    }
+  }
 };
