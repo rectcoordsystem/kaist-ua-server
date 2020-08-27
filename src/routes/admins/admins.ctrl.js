@@ -1,12 +1,18 @@
 const models = require("../../database/models");
+const { generateToken } = require("../auth/generateToken");
 const crypto = require("crypto");
-const { access } = require("fs");
 
-var genRandomString = function (length) {
+const genRandomString = function (length) {
   return crypto
     .randomBytes(Math.ceil(length / 2))
     .toString("hex") /** convert to hexadecimal format */
     .slice(0, length); /** return required number of characters */
+};
+
+const hashed = (data, salt) => {
+  const hash = crypto.createHmac("sha512", salt);
+  hash.update(data);
+  return hash.digest("hex");
 };
 
 /** @swagger
@@ -89,13 +95,22 @@ exports.login = async (ctx) => {
       message: "로그인 실패!",
     };
   } else {
-    const hash = crypto.createHmac("sha512", res.salt);
-    hash.update(password);
-    const value = hash.digest("hex");
+    const value = hashed(password, res.salt);
     if (value === res.password) {
+      const token = await generateToken({ id: res.id });
+      console.log(token);
+      ctx.cookies.set("kaistua_web_access_token", token, {
+        maxAge: 1000 * 60 * 60 * 24,
+        overwrite: true,
+      });
+      ctx.status = 200;
       ctx.body = {
-        email: res.email,
-        accessToken: res.access_token,
+        auth: "admin",
+      };
+    } else {
+      ctx.status = 404;
+      ctx.body = {
+        message: "로그인 실패!",
       };
     }
   }
@@ -133,18 +148,16 @@ exports.login = async (ctx) => {
  *          description: Internal Server Error
  */
 exports.check = async (ctx) => {
-  const url = new URLSearchParams(ctx.url.split("?")[1]);
-  const res = await models.admin.findOne({
-    where: { access_token: url.get("access_token") },
-  });
-  if (!res) {
+  if (!ctx.request.user) {
+    ctx.status = 200;
     ctx.body = {
-      access: false,
+      message: "Unauthorized admin",
+      auth: false,
     };
   } else {
-    ctx.body = {
-      access: true,
-    };
+    const { id } = ctx.request.user;
+    const admin = await models.admin.findOne({ where: { id } });
+    ctx.body = { auth: admin ? "admin" : false };
   }
 };
 
@@ -176,9 +189,6 @@ exports.check = async (ctx) => {
  *              id:
  *                type: string
  *                format: uuid
- *              access_token:
- *                type: string
- *                format: uuid
  *              email:
  *                type: string
  *                format: email
@@ -208,8 +218,10 @@ exports.register = async (ctx) => {
   const res = await models.admin.findOne({ where: { email } });
   if (res) return;
   var salt = genRandomString(16);
-  const hash = crypto.createHmac("sha512", salt);
-  hash.update(password);
-  const value = hash.digest("hex");
-  ctx.body = await models.admin.create({ email, salt, password: value });
+  const value = hashed(password, salt);
+  ctx.response.body = await models.admin.create({
+    email,
+    salt,
+    password: value,
+  });
 };
