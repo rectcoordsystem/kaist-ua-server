@@ -40,7 +40,6 @@ async function jwtMiddleware(ctx, next) {
         httpOnly: true,
       });
     }
-
     // ctx.request.user 에 디코딩된 값을 넣어줍니다
     ctx.request.user = decoded;
   } catch (e) {
