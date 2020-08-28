@@ -1,5 +1,5 @@
-const models = require('../../database/models');
-const Op = require('sequelize').Op;
+const models = require("../../database/models");
+const Op = require("sequelize").Op;
 
 /** @swagger
  *  /posts:
@@ -60,6 +60,12 @@ const Op = require('sequelize').Op;
  *          description: Internal Server Error
  */
 exports.write = async (ctx) => {
+  ctx.assert(ctx.request.user, 401);
+  const { id } = ctx.request.user;
+  const admin = await models.Admin.findOne({
+    where: { id },
+  });
+  ctx.assert(admin, 401);
   const { title, author, content, bulletinId } = ctx.request.body;
   const post = {
     title: title,
@@ -67,11 +73,9 @@ exports.write = async (ctx) => {
     content: content,
     bulletin_id: parseInt(bulletinId),
   };
-  console.log(post);
-  await models.post
-    .create(post)
+  await models.Post.create(post)
     .then((res) => {
-      console.log('포스트 업로드 성공!');
+      console.log("포스트 업로드 성공!");
       ctx.body = res;
     })
     .catch((err) => {
@@ -174,13 +178,12 @@ exports.list = async (ctx) => {
 
   var body = {};
 
-  await models.post
-    .findAll({
-      order: [['created_at', 'DESC']],
-      offset: offset,
-      limit: POST_NUM_PER_PAGE,
-      where: where,
-    })
+  await models.Post.findAll({
+    order: [["created_at", "DESC"]],
+    offset: offset,
+    limit: POST_NUM_PER_PAGE,
+    where: where,
+  })
     .then((res) => {
       if (!res) body.posts = res;
       body.posts = res;
@@ -189,10 +192,9 @@ exports.list = async (ctx) => {
       console.log(err);
     });
 
-  await models.post
-    .count({
-      where: where,
-    })
+  await models.Post.count({
+    where: where,
+  })
     .then((res) => {
       body.lastPage = Math.ceil(res / POST_NUM_PER_PAGE);
     })
@@ -259,14 +261,13 @@ exports.list = async (ctx) => {
 exports.read = async (ctx) => {
   const { id } = ctx.params;
 
-  await models.post
-    .findOne({
-      where: { id },
-    })
+  await models.Post.findOne({
+    where: { id },
+  })
     .then((res) => {
       ctx.body = res;
 
-      models.post.update({ views: res.views + 1 }, { where: { id } });
+      models.Post.update({ views: res.views + 1 }, { where: { id } });
     })
     .catch((err) => {
       console.log(err);
@@ -305,20 +306,25 @@ exports.read = async (ctx) => {
  *          description: Internal Server Error
  */
 exports.remove = async (ctx) => {
+  ctx.assert(ctx.request.user, 401);
+  const adminId = ctx.request.user.id;
+  const admin = await models.Admin.findOne({
+    where: { id: adminId },
+  });
+  ctx.assert(admin, 401);
   const { id } = ctx.params;
 
-  await models.post
-    .destroy({
-      where: { id: id },
-    })
+  await models.Post.destroy({
+    where: { id: id },
+  })
     .then((res) => {
       if (!res) {
         ctx.status = 404;
         ctx.body = {
-          message: '포스트가 존재하지 않습니다.',
+          message: "포스트가 존재하지 않습니다.",
         };
       } else {
-        console.log('포스트 삭제 성공!');
+        console.log("포스트 삭제 성공!");
         ctx.status = 204;
       }
     })
@@ -378,6 +384,12 @@ exports.remove = async (ctx) => {
  *          description: Internal Server Error
  */
 exports.update = async (ctx) => {
+  ctx.assert(ctx.request.user, 401);
+  const adminId = ctx.request.user.id;
+  const admin = await models.Admin.findOne({
+    where: { id: adminId },
+  });
+  ctx.assert(admin, 401);
   const { id } = ctx.params;
   const { title, author, content, views } = ctx.request.body;
   const post = {
@@ -387,13 +399,12 @@ exports.update = async (ctx) => {
     views: views,
   };
 
-  await models.post
-    .update(post, {
-      where: { id: id },
-    })
+  await models.Post.update(post, {
+    where: { id: id },
+  })
     .then((res) => {
       ctx.body = post;
-      console.log('포스트 업데이트 성공!');
+      console.log("포스트 업데이트 성공!");
     })
     .catch((err) => {
       console.log(err);

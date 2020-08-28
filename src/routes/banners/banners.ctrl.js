@@ -1,4 +1,4 @@
-const models = require('../../database/models');
+const models = require("../../database/models");
 
 /** @swagger
  *  /banners:
@@ -48,20 +48,9 @@ const models = require('../../database/models');
  *          description: Internal Server Error
  */
 exports.upload = async (ctx) => {
-  const { url, link } = ctx.request.body;
-  const banner = {
-    url: url,
-    link: link,
-  };
-  await models.banner
-    .create(banner)
-    .then((res) => {
-      console.log('배너 추가 성공!');
-      ctx.body = res;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const { image, link, isActive } = ctx.request.body;
+  const res = await models.Banner.create({ image, link, isActive });
+  ctx.assert(res, 400);
 };
 
 /** @swagger
@@ -106,15 +95,9 @@ exports.upload = async (ctx) => {
  *          description: Internal Server Error
  */
 exports.list = async (ctx) => {
-  await models.banner
-    .findAll()
-    .then((res) => {
-      const banners = res;
-      ctx.body = banners;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const banners = await models.Banner.findAll({ where: { isActive: true } });
+  ctx.assert(banners, 404);
+  ctx.body = banners;
 };
 
 /** @swagger
@@ -152,23 +135,10 @@ exports.list = async (ctx) => {
 exports.remove = async (ctx) => {
   const { id } = ctx.params;
 
-  await models.banner
-    .destroy({
-      where: { id: id },
-    })
-    .then((res) => {
-      //number
-      if (!res) {
-        ctx.status = 404;
-        ctx.body = {
-          message: '배너가 존재하지 않습니다.',
-        };
-      } else {
-        console.log('배너 삭제 성공!');
-        ctx.status = 204;
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const banner = await models.Banner.findOne({
+    where: { id: id },
+  });
+  ctx.assert(banner, 404);
+  banner.destroy();
+  ctx.status = 204;
 };

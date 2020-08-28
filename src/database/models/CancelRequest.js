@@ -1,27 +1,28 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const Payment = sequelize.define(
-    "Payment",
+  const CancelRequest = sequelize.define(
+    "CancelRequest",
     {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      studentNumber: DataTypes.STRING,
       year: DataTypes.INTEGER,
       semester: DataTypes.STRING,
     },
     {
       freezeTableName: true,
-      timestamps: false,
       charset: "utf8",
       collate: "utf8_general_ci",
     }
   );
-  Payment.associate = function (models) {
+  CancelRequest.associate = function (models) {
     // associations can be defined here
-    models.Payment.belongsTo(models.Student);
+    models.CancelRequest.belongsTo(models.Student, {
+      targetKey: "studentNumber",
+      foreignKey: "studentNumber",
+    });
   };
-  return Payment;
+  return CancelRequest;
 };

@@ -1,15 +1,14 @@
-const models = require('../../database/models');
-
+const models = require("../../database/models");
 
 /** @swagger
- *  /bulletins:
+ *  /boards:
  *    post:
- *      summary: open bulletin
- *      tags: [Bulletins]
+ *      summary: create board
+ *      tags: [Boards]
  *      parameters:
  *        - $ref: "#/parameters/adminAuth@header"
  *        - in: body
- *          name: bulletin
+ *          name: board
  *          schema:
  *            type: object
  *            properties:
@@ -47,28 +46,27 @@ const models = require('../../database/models');
  *        500:
  *          description: Internal Server Error
  */
-exports.open = async (ctx) => {
-  const { title, description } = ctx.request.body;
-  const bulletin = {
-    title: title,
-    description: description,
-  };
-  await models.bulletin
-    .create(bulletin)
-    .then((res) => {
-      console.log('게시판 오픈 성공!');
-      ctx.body = res;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+exports.create = async (ctx) => {
+  const {
+    korTitle,
+    engTitle,
+    korDescription,
+    engDescription,
+  } = ctx.request.body;
+  const board = { korTitle, engTitle, korDescription, engDescription };
+  const res = await models.Board.create(board);
+
+  ctx.assert(res, 400);
+
+  ctx.status = 204;
+  ctx.body = res;
 };
 
 /** @swagger
- *  /bulletins:
+ *  /boards:
  *    get:
- *      summary: obtain all bulletins
- *      tags: [Bulletins]
+ *      summary: obtain all boards
+ *      tags: [Boards]
  *      produces:
  *        - application/json
  *      responses:
@@ -107,22 +105,16 @@ exports.open = async (ctx) => {
  *          description: Internal Server Error
  */
 exports.list = async (ctx) => {
-  await models.bulletin
-    .findAll()
-    .then((res) => {
-      const bulletins = res;
-      ctx.body = bulletins;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const res = models.Board.findAll();
+  ctx.assert(res, 404);
+  ctx.body = res;
 };
 
 /** @swagger
- *  /bulletins/{id}:
+ *  /boards/{id}:
  *    delete:
- *      summary: delete bulletin by ID
- *      tags: [Bulletins]
+ *      summary: delete board by ID
+ *      tags: [Boards]
  *      parameters:
  *        - $ref: "#/parameters/adminAuth@header"
  *        - in: path
@@ -140,7 +132,7 @@ exports.list = async (ctx) => {
  *        401:
  *          description: Unauthorized
  *        404:
- *          description: Not Found (bulletin doesn't exist)
+ *          description: Not Found (board doesn't exist)
  *          schema:
  *            type: object
  *            properties:
@@ -150,31 +142,24 @@ exports.list = async (ctx) => {
  *        500:
  *          description: Internal Server Error
  */
-exports.close = async (ctx) => {
+exports.delete = async (ctx) => {
   const { id } = ctx.params;
-
-  await models.bulletin
-    .destroy({
-      where: { id: id },
-    })
-    .then((res) => {
-      if (!res) {
-        ctx.status = 404;
-        ctx.body = {
-          message: '게시판이 존재하지 않습니다!',
-        };
-      } else {
-        console.log('게시판 삭제 성공!');
-        ctx.status = 204;
-      }
-    });
+  ctx.assert(id, 400);
+  const res = await models.Board.findOne({
+    where: {
+      id,
+    },
+  });
+  assert(res, 404);
+  res.destroy();
+  ctx.status = 204;
 };
 
 /** @swagger
- *  /bulletins/{id}:
+ *  /boards/{id}:
  *    patch:
- *      summary: update title or description of bulletin
- *      tags: [Bulletins]
+ *      summary: update title or description of board
+ *      tags: [Boards]
  *      parameters:
  *        - $ref: "#/parameters/adminAuth@header"
  *        - in: path
@@ -183,7 +168,7 @@ exports.close = async (ctx) => {
  *            type: string
  *          required: true
  *        - in: body
- *          name: bulletin
+ *          name: board
  *          schema:
  *            type: object
  *            properties:
@@ -213,23 +198,18 @@ exports.close = async (ctx) => {
  *        500:
  *          description: Internal Server Error
  */
-exports.reopen = async (ctx) => {
+exports.edit = async (ctx) => {
   const { id } = ctx.params;
   const { title, description } = ctx.request.body;
-  const bulletin = {
+  const board = {
     title: title,
     description: description,
   };
 
-  await models.bulletin
-    .update(bulletin, {
-      where: { id: id },
-    })
-    .then((res) => {
-      ctx.body = bulletin;
-      console.log('게시판 업데이트 성공!');
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const res = await models.Board.update(board, {
+    where: { id },
+  });
+  ctx.assert(res, 404);
+  ctx.status = 200;
+  ctx.body = res;
 };

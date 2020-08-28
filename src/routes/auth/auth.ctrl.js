@@ -4,14 +4,32 @@ const e = require("cors");
 
 exports.signup = async (ctx) => {
   const { USER_INFO, state } = JSON.parse(ctx.request.body.result).dataMap;
-  var record = await models.user.findOne({ where: USER_INFO });
+  const newStudent = {
+    studentNumber: USER_INFO.ku_std_no,
+    kaistUid: USER_INFO.kaist_uid,
+    korName: USER_INFO.ku_kname,
+    engName: USER_INFO.displayname,
+    affiliation: USER_INFO.ku_acad_name,
+  };
+  var record = await models.Student.findOne({ where: newStudent });
   if (record || state === process.env.REGISTER_KEY) {
     if (!record) {
-      record = await models.user.create(USER_INFO);
+      record = await models.Student.create(newStudent);
+      const studentId = record.id;
+      const payments = await models.Payment.findAll({
+        where: { studentNumber: record.studentNumber },
+      });
+      console.log(payments);
+      await Promise.all(
+        payments.map(async (payment) => {
+          payment.StudentId = studentId;
+          await payment.save();
+        })
+      );
     } else {
     }
     const token = await generateToken({ id: record.id });
-    ctx.cookies.set("kaistua_web_access_token", token, {
+    ctx.cookies.set(process.env.ACCESS_TOKEN, token, {
       maxAge: 1000 * 60 * 60 * 24 * 7,
       overwrite: true,
     });
@@ -22,31 +40,17 @@ exports.signup = async (ctx) => {
 };
 
 exports.logout = async (ctx) => {
-  ctx.cookies.set("kaistua_web_access_token", "", { overwrite: true });
-  ctx.response.status = 200;
+  ctx.cookies.set(process.env.ACCESS_TOKEN, "", { overwrite: true });
+  ctx.status = 200;
 };
 
 exports.check = async (ctx) => {
-  if (!ctx.request.user) {
-    ctx.status = 200;
-    ctx.body = {
-      message: "Unauthorized user",
-      auth: false,
-    };
-  } else {
-    const { id } = ctx.request.user;
-    const user = await models.user.findOne({ where: { id } });
-    if (!user) {
-      ctx.status = 200;
-      ctx.body = {
-        message: "Unauthorized user",
-        auth: false,
-      };
-    } else {
-      ctx.body = {
-        auth: user ? "user" : false,
-        name: user.ku_kname || user.displayname,
-      };
-    }
-  }
+  ctx.assert(ctx.request.user, 401);
+  const { id } = ctx.request.user;
+  const student = await models.Student.findOne({ where: { id } });
+  ctx.assert(student, 401);
+  ctx.body = {
+    auth: "student",
+    name: student.korName || student.engName,
+  };
 };
