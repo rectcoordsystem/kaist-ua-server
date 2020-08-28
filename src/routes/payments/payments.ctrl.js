@@ -1,7 +1,7 @@
 const models = require("../../database/models");
 const Op = require("sequelize").Op;
 
-exports.write = async (ctx) => {
+exports.bulkUpload = async (ctx) => {
   ctx.assert(ctx.request.user, 401);
   const { id } = ctx.request.user;
   const admin = await models.Admin.findOne({
@@ -31,6 +31,5 @@ exports.list = async (ctx) => {
     include: models.Payment,
   });
   ctx.assert(student, 401);
-  console.log(student);
   ctx.body = { payments: student.Payments };
 };

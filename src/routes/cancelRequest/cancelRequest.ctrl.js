@@ -13,15 +13,26 @@ exports.post = async (ctx) => {
   });
   ctx.assert(student, 401);
   const { year, semester } = ctx.request.body;
-  const { studentNumber, korName, engName } = student;
-  const res = await models.CancelRequest.create({
-    studentNumber,
-    korName,
-    engName,
-    year,
-    semester,
+  const { studentNumber } = student;
+  const res = await models.CancelRequest.findOne({
+    where: {
+      studentNumber,
+      year,
+      semester,
+    },
   });
-  ctx.assert(res, 400);
+  if (res) {
+    ctx.status = 200;
+    ctx.body = res;
+  } else {
+    const newRequest = await models.CancelRequest.create({
+      studentNumber,
+      year,
+      semester,
+    });
+    ctx.assert(newRequest, 400);
+    ctx.status = 204;
+  }
 };
 
 /**
@@ -52,13 +63,10 @@ exports.getOne = async (ctx) => {
     where: { id },
     include: models.CancelRequest,
   });
-  ctx.assert(student, 401);
+  ctx.assert(student.CancelRequest, 404);
 
-  if (student.CancelRequest) {
-    ctx.body = { exists: true };
-  } else {
-    ctx.body = { exists: true };
-  }
+  ctx.status = 200;
+  ctx.body = student.CancelRequest;
 };
 
 /**
@@ -68,11 +76,15 @@ exports.getOne = async (ctx) => {
 exports.delete = async (ctx) => {
   ctx.assert(ctx.request.user, 401);
   const { id } = ctx.request.user;
-  const { year, semester } = ctx.request.params;
+  const { year, semester } = ctx.query;
+  ctx.assert(year && semester, 400);
   const student = await models.Student.findOne({
     where: { id },
     include: { model: models.CancelRequest, where: { year, semester } },
   });
-  ctx.assert(student, 401);
+  if (!student) {
+    ctx.status = 204;
+    return;
+  }
   ctx.body = student.CancelRequests[0].destroy();
 };
