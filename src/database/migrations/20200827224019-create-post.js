@@ -12,7 +12,7 @@ module.exports = {
       korTitle: Sequelize.TEXT,
       engTitle: Sequelize.TEXT,
       korContent: Sequelize.TEXT,
-      korContent: Sequelize.TEXT,
+      engContent: Sequelize.TEXT,
       views: {
         type: Sequelize.INTEGER,
         defaultValue: 0,

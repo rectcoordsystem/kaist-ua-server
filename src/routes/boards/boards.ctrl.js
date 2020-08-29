@@ -105,7 +105,7 @@ exports.create = async (ctx) => {
  *          description: Internal Server Error
  */
 exports.list = async (ctx) => {
-  const res = models.Board.findAll();
+  const res = await models.Board.findAll();
   ctx.assert(res, 404);
   ctx.body = res;
 };

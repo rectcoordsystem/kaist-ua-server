@@ -6,7 +6,7 @@ module.exports = {
     return queryInterface
       .addColumn(
         "Post", // name of Source model
-        "BoardId", // name of the key we're adding
+        "boardId", // name of the key we're adding
         {
           type: Sequelize.INTEGER,
           references: {
@@ -56,7 +56,7 @@ module.exports = {
     return queryInterface
       .removeColumn(
         "Post", // name of Source model
-        "BoardId" // key we want to remove
+        "boardId" // key we want to remove
       )
       .then(() => {
         // remove Student hasMany CancelRequest

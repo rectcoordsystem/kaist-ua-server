@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   CancelRequest.associate = function (models) {
     // associations can be defined here
-    models.CancelRequest.belongsTo(models.Student, {
+    CancelRequest.belongsTo(models.Student, {
       targetKey: "studentNumber",
       foreignKey: "studentNumber",
     });

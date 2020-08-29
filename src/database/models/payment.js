@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   Payment.associate = function (models) {
     // associations can be defined here
-    models.Payment.belongsTo(models.Student);
+    models.Payment.belongsTo(models.Student, { foreignKey: "studentId" });
   };
   return Payment;
 };

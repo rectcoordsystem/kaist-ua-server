@@ -23,8 +23,8 @@ module.exports = (sequelize, DataTypes) => {
   Student.associate = function (models) {
     // associations can be defined here
     Student.hasMany(models.CancelRequest, {
-      targetKey: "studentNumber",
       foreignKey: "studentNumber",
+      sourceKey: "studentNumber",
     });
     Student.hasMany(models.Payment);
   };

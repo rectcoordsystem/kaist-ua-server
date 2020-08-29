@@ -12,16 +12,16 @@ module.exports = (sequelize, DataTypes) => {
       korTitle: DataTypes.TEXT,
       engTitle: DataTypes.TEXT,
       korContent: DataTypes.TEXT,
-      korContent: DataTypes.TEXT,
+      engContent: DataTypes.TEXT,
       views: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
       },
       isActive: DataTypes.BOOLEAN,
       isNew: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.VIRTUAL,
         get: function () {
-          const createdAt = this.getDataValue("createdAt");
+          const createdAt = this.createdAt;
           const createdAtDate = new Date(createdAt);
           const now = new Date();
           return createdAtDate.getMinutes() > now.getMinutes() - 60 * 24;
@@ -30,14 +30,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       freezeTableName: true,
-      paranoid: true,
       charset: "utf8",
       collate: "utf8_general_ci",
     }
   );
 
   Post.associate = function (models) {
-    models.Post.belongsTo(models.Board);
+    models.Post.belongsTo(models.Board, { foreignKey: "boardId" });
   };
 
   return Post;

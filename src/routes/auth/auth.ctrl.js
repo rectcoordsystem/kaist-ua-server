@@ -45,12 +45,22 @@ exports.logout = async (ctx) => {
 };
 
 exports.check = async (ctx) => {
-  ctx.assert(ctx.request.user, 401);
+  if (!ctx.request.user) {
+    ctx.status = 204;
+    return;
+  }
   const { id } = ctx.request.user;
   const student = await models.Student.findOne({ where: { id } });
-  ctx.assert(student, 401);
-  ctx.body = {
-    auth: "student",
-    name: student.korName || student.engName,
-  };
+  if (!student) {
+    const admin = await models.Admin.findOne({ where: { id } });
+    if (!admin) {
+      ctx.status = 204;
+      return;
+    } else {
+      ctx.body = { auth: "admin" };
+      return;
+    }
+  }
+  ctx.status = 200;
+  ctx.body = { auth: "student", name: student.korName || student.engName };
 };

@@ -130,10 +130,16 @@ exports.login = async (ctx) => {
  *          description: Internal Server Error
  */
 exports.check = async (ctx) => {
-  ctx.assert(ctx.request.user, 401);
+  if (!ctx.request.user) {
+    ctx.status = 204;
+    return;
+  }
   const { id } = ctx.request.user;
   const admin = await models.Admin.findOne({ where: { id } });
-  ctx.assert(admin, 401, "Test");
+  if (!admin) {
+    ctx.status = 204;
+    return;
+  }
   ctx.status = 200;
   ctx.body = { auth: "admin" };
 };

@@ -10,13 +10,23 @@ exports.bulkUpload = async (ctx) => {
   ctx.assert(admin, 401);
   const { studentNumberList, year, semester } = ctx.request.body;
   const bulkData = [];
-  studentNumberList.map((id) => {
-    bulkData.push({
-      studentNumber: id,
-      year,
-      semester,
-    });
-  });
+  await Promise.all(
+    studentNumberList.map(async (studentNumber) => {
+      const payment = {
+        studentNumber,
+        year,
+        semester,
+      };
+      const student = await models.Student.findOne({
+        where: { studentNumber },
+      });
+      if (student) {
+        payment.studentId = student.id;
+        console.log(payment);
+      }
+      bulkData.push(payment);
+    })
+  );
   const res = await models.Payment.bulkCreate(bulkData);
   if (res) {
     ctx.response.body = bulkData.length;

@@ -66,21 +66,25 @@ exports.write = async (ctx) => {
     where: { id },
   });
   ctx.assert(admin, 401);
-  const { title, author, content, bulletinId } = ctx.request.body;
+  const {
+    author,
+    korTitle,
+    engTitle,
+    korContent,
+    engContent,
+    bulletinId,
+  } = ctx.request.body;
   const post = {
-    title: title,
-    author: author,
-    content: content,
-    bulletin_id: parseInt(bulletinId),
+    author,
+    korTitle,
+    engTitle,
+    korContent,
+    engContent,
+    bulletinId: parseInt(bulletinId),
   };
-  await models.Post.create(post)
-    .then((res) => {
-      console.log("포스트 업로드 성공!");
-      ctx.body = res;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const res = await models.Post.create(post);
+  ctx.assert(res, 400);
+  ctx.status = 204;
 };
 
 /** @swagger
@@ -158,17 +162,14 @@ exports.write = async (ctx) => {
  *          description: Internal Server Error
  */
 exports.list = async (ctx) => {
-  const { page, title, author, bulletinId } = ctx.request.query;
+  const { page, title, author, boardId } = ctx.request.query;
   const POST_NUM_PER_PAGE = 15;
 
-  if (page < 1) {
-    ctx.status = 400;
-    return;
-  }
+  ctx.assert(page > 0, 400);
 
   const offset = POST_NUM_PER_PAGE * (page - 1);
 
-  var where = { bulletin_id: parseInt(bulletinId) };
+  var where = { boardId: parseInt(boardId) };
 
   if (author) where.author = author;
   if (title)
@@ -176,31 +177,21 @@ exports.list = async (ctx) => {
       [Op.like]: `%${title}%`,
     };
 
-  var body = {};
+  const body = {}; // Response body
 
-  await models.Post.findAll({
-    order: [["created_at", "DESC"]],
+  const posts = await models.Post.findAll({
+    order: [["createdAt", "DESC"]],
     offset: offset,
     limit: POST_NUM_PER_PAGE,
     where: where,
-  })
-    .then((res) => {
-      if (!res) body.posts = res;
-      body.posts = res;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  });
 
-  await models.Post.count({
+  body.posts = posts;
+
+  const postCount = await models.Post.count({
     where: where,
-  })
-    .then((res) => {
-      body.lastPage = Math.ceil(res / POST_NUM_PER_PAGE);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  });
+  body.lastPage = Math.ceil(postCount / POST_NUM_PER_PAGE);
 
   ctx.body = body;
 };

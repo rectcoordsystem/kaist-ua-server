@@ -63,10 +63,10 @@ exports.getOne = async (ctx) => {
     where: { id },
     include: models.CancelRequest,
   });
-  ctx.assert(student.CancelRequest, 404);
+  ctx.assert(student.CancelRequests, 400);
 
   ctx.status = 200;
-  ctx.body = student.CancelRequest;
+  ctx.body = student.CancelRequests;
 };
 
 /**
