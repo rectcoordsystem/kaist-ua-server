@@ -62,5 +62,9 @@ exports.check = async (ctx) => {
     }
   }
   ctx.status = 200;
-  ctx.body = { auth: "student", name: student.korName || student.engName };
+  ctx.body = {
+    auth: "student",
+    korName: student.korName,
+    engName: student.engName,
+  };
 };

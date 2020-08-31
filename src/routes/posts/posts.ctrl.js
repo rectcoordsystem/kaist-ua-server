@@ -60,19 +60,20 @@ const Op = require("sequelize").Op;
  *          description: Internal Server Error
  */
 exports.write = async (ctx) => {
-  ctx.assert(ctx.request.user, 401);
-  const { id } = ctx.request.user;
-  const admin = await models.Admin.findOne({
-    where: { id },
-  });
-  ctx.assert(admin, 401);
+  // ctx.assert(ctx.request.user, 401);
+  // const { id } = ctx.request.user;
+  // const admin = await models.Admin.findOne({
+  //   where: { id },
+  // });
+  // ctx.assert(Cadmin, 401);
   const {
     author,
     korTitle,
     engTitle,
     korContent,
     engContent,
-    bulletinId,
+    isActive,
+    boardId,
   } = ctx.request.body;
   const post = {
     author,
@@ -80,7 +81,8 @@ exports.write = async (ctx) => {
     engTitle,
     korContent,
     engContent,
-    bulletinId: parseInt(bulletinId),
+    isActive,
+    boardId: parseInt(boardId),
   };
   const res = await models.Post.create(post);
   ctx.assert(res, 400);
@@ -184,6 +186,7 @@ exports.list = async (ctx) => {
     offset: offset,
     limit: POST_NUM_PER_PAGE,
     where: where,
+    raw: false,
   });
 
   body.posts = posts;
@@ -254,9 +257,12 @@ exports.read = async (ctx) => {
 
   await models.Post.findOne({
     where: { id },
+    raw: false,
+    include: models.Board,
   })
     .then((res) => {
       ctx.body = res;
+      console.log(res);
 
       models.Post.update({ views: res.views + 1 }, { where: { id } });
     })

@@ -20,10 +20,11 @@ module.exports = (sequelize, DataTypes) => {
       isActive: DataTypes.BOOLEAN,
       isNew: {
         type: DataTypes.VIRTUAL,
-        get: function () {
+        get() {
           const createdAt = this.createdAt;
           const createdAtDate = new Date(createdAt);
           const now = new Date();
+          console.log(now);
           return createdAtDate.getMinutes() > now.getMinutes() - 60 * 24;
         },
       },

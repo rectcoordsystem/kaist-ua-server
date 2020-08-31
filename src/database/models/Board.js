@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Board.associate = function (models) {
-    models.Board.hasMany(models.Post);
+    models.Board.hasMany(models.Post, { foreignKey: "boardId" });
   };
 
   return Board;

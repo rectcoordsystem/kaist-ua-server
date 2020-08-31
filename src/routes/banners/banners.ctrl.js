@@ -51,6 +51,8 @@ exports.upload = async (ctx) => {
   const { image, link, isActive } = ctx.request.body;
   const res = await models.Banner.create({ image, link, isActive });
   ctx.assert(res, 400);
+  ctx.status = 200;
+  ctx.body = res;
 };
 
 /** @swagger
