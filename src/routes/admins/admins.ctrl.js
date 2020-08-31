@@ -1,12 +1,19 @@
-const models = require('../../database/models');
-const crypto = require('crypto');
-const { access } = require('fs');
+const models = require("../../database/models");
+const { generateToken } = require("../auth/generateToken");
+const crypto = require("crypto");
+const { assert } = require("console");
 
-var genRandomString = function (length) {
+const genRandomString = function (length) {
   return crypto
     .randomBytes(Math.ceil(length / 2))
-    .toString('hex') /** convert to hexadecimal format */
+    .toString("hex") /** convert to hexadecimal format */
     .slice(0, length); /** return required number of characters */
+};
+
+const hashed = (data, salt) => {
+  const hash = crypto.createHmac("sha512", salt);
+  hash.update(data);
+  return hash.digest("hex");
 };
 
 /** @swagger
@@ -71,34 +78,24 @@ var genRandomString = function (length) {
  *          description: Unauthorized
  *        404:
  *          description: Not Found (Failed to login)
- *          schema:
- *            type: object
- *            properties:
- *              message:
- *                type: string
- *                example: 로그인 실패!
  *        500:
  *          description: Internal Server Error
  */
 exports.login = async (ctx) => {
   const { email, password } = ctx.request.body;
-  const res = await models.admin.findOne({ where: { email } });
-  if (!res) {
-    ctx.status = 404;
-    ctx.body = {
-      message: '로그인 실패!',
-    };
-  } else {
-    const hash = crypto.createHmac('sha512', res.salt);
-    hash.update(password);
-    const value = hash.digest('hex');
-    if (value === res.password) {
-      ctx.body = {
-        email: res.email,
-        accessToken: res.access_token,
-      };
-    }
-  }
+  const res = await models.Admin.findOne({ where: { email } });
+  ctx.assert(res, 204);
+  const value = hashed(password, res.salt);
+  ctx.assert(value === res.password, 204);
+  const token = await generateToken({ id: res.id });
+  ctx.cookies.set(process.env.ACCESS_TOKEN, token, {
+    maxAge: 1000 * 60 * 60 * 24,
+    overwrite: true,
+  });
+  ctx.status = 200;
+  ctx.body = {
+    auth: "admin",
+  };
 };
 
 /** @swagger
@@ -133,19 +130,18 @@ exports.login = async (ctx) => {
  *          description: Internal Server Error
  */
 exports.check = async (ctx) => {
-  const url = new URLSearchParams(ctx.url.split('?')[1]);
-  const res = await models.admin.findOne({
-    where: { access_token: url.get('access_token') },
-  });
-  if (!res) {
-    ctx.body = {
-      access: false,
-    };
-  } else {
-    ctx.body = {
-      access: true,
-    };
+  if (!ctx.request.user) {
+    ctx.status = 204;
+    return;
   }
+  const { id } = ctx.request.user;
+  const admin = await models.Admin.findOne({ where: { id } });
+  if (!admin) {
+    ctx.status = 204;
+    return;
+  }
+  ctx.status = 200;
+  ctx.body = { auth: "admin" };
 };
 
 /** @swagger
@@ -176,9 +172,6 @@ exports.check = async (ctx) => {
  *              id:
  *                type: string
  *                format: uuid
- *              access_token:
- *                type: string
- *                format: uuid
  *              email:
  *                type: string
  *                format: email
@@ -205,11 +198,13 @@ exports.check = async (ctx) => {
  */
 exports.register = async (ctx) => {
   const { email, password } = ctx.request.body;
-  const res = await models.admin.findOne({ where: { email } });
-  if (res) return;
+  const res = await models.Admin.findOne({ where: { email } });
+  ctx.assert(!res, 400);
   var salt = genRandomString(16);
-  const hash = crypto.createHmac('sha512', salt);
-  hash.update(password);
-  const value = hash.digest('hex');
-  ctx.body = await models.admin.create({ email, salt, password: value });
+  const value = hashed(password, salt);
+  ctx.response.body = await models.Admin.create({
+    email,
+    salt,
+    password: value,
+  });
 };

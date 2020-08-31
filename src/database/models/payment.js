@@ -1,25 +1,27 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const Admin = sequelize.define(
-    "Admin",
+  const Payment = sequelize.define(
+    "Payment",
     {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      email: DataTypes.STRING,
-      password: DataTypes.STRING,
-      salt: DataTypes.STRING,
+      studentNumber: DataTypes.STRING,
+      year: DataTypes.INTEGER,
+      semester: DataTypes.STRING,
     },
     {
       freezeTableName: true,
+      timestamps: false,
       charset: "utf8",
       collate: "utf8_general_ci",
     }
   );
-  Admin.associate = function (models) {
+  Payment.associate = function (models) {
     // associations can be defined here
+    models.Payment.belongsTo(models.Student, { foreignKey: "studentId" });
   };
-  return Admin;
+  return Payment;
 };

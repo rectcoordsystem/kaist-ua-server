@@ -1,9 +1,9 @@
-const Router = require('koa-router');
+const Router = require("koa-router");
 const auth = new Router();
-const authCtrl = require('./auth.ctrl');
+const authCtrl = require("./auth.ctrl");
 
-auth.get('/login', authCtrl.login);
-auth.get('/register', authCtrl.register);
-auth.post('/signup', authCtrl.signUp);
+auth.post("/signup", authCtrl.signup);
+auth.get("/check", authCtrl.check);
+auth.get("/logout", authCtrl.logout);
 
 module.exports = auth;
