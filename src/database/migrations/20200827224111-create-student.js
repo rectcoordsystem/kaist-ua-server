@@ -8,7 +8,11 @@ module.exports = {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
-      studentNumber: { type: Sequelize.INTEGER, unique: true },
+      studentNumber: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        unique: true,
+      },
       kaistUid: Sequelize.STRING,
       korName: Sequelize.STRING,
       engName: Sequelize.STRING,
