@@ -11,8 +11,9 @@ exports.signup = async (ctx) => {
     engName: USER_INFO.displayname,
     affiliation: USER_INFO.ku_acad_name,
   };
+  const { key, redirect } = JSON.parse(state);
   var record = await models.Student.findOne({ where: newStudent });
-  if (record || state === process.env.REGISTER_KEY) {
+  if (record || key === process.env.REGISTER_KEY) {
     if (!record) {
       record = await models.Student.create(newStudent);
       const studentId = record.id;
@@ -33,7 +34,8 @@ exports.signup = async (ctx) => {
       maxAge: 1000 * 60 * 60 * 24 * 7,
       overwrite: true,
     });
-    ctx.redirect(`${process.env.WEB_FRONTEND}/web/main`);
+    if (redirect) ctx.redirect(redirect);
+    else ctx.redirect(`${process.env.WEB_FRONTEND}/web/main`);
   } else {
     ctx.redirect(`${process.env.WEB_FRONTEND}/web/auth/agreement/login`);
   }
