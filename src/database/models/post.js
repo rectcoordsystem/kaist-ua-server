@@ -8,7 +8,8 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      author: DataTypes.TEXT,
+      korAuthor: DataTypes.TEXT,
+      engAuthor: DataTypes.TEXT,
       korTitle: DataTypes.TEXT,
       engTitle: DataTypes.TEXT,
       korContent: DataTypes.TEXT,
@@ -24,7 +25,6 @@ module.exports = (sequelize, DataTypes) => {
           const createdAt = this.createdAt;
           const createdAtDate = new Date(createdAt);
           const now = new Date();
-          console.log(now);
           return createdAtDate.getMinutes() > now.getMinutes() - 60 * 24;
         },
       },
