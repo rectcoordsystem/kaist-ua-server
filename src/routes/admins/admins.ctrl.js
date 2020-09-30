@@ -1,6 +1,7 @@
 const models = require("../../database/models");
 const { generateToken } = require("../auth/generateToken");
 const crypto = require("crypto");
+const { assert } = require("console");
 
 const genRandomString = function (length) {
   return crypto
@@ -77,43 +78,24 @@ const hashed = (data, salt) => {
  *          description: Unauthorized
  *        404:
  *          description: Not Found (Failed to login)
- *          schema:
- *            type: object
- *            properties:
- *              message:
- *                type: string
- *                example: 로그인 실패!
  *        500:
  *          description: Internal Server Error
  */
 exports.login = async (ctx) => {
   const { email, password } = ctx.request.body;
-  const res = await models.admin.findOne({ where: { email } });
-  if (!res) {
-    ctx.status = 404;
-    ctx.body = {
-      message: "로그인 실패!",
-    };
-  } else {
-    const value = hashed(password, res.salt);
-    if (value === res.password) {
-      const token = await generateToken({ id: res.id });
-      console.log(token);
-      ctx.cookies.set("kaistua_web_access_token", token, {
-        maxAge: 1000 * 60 * 60 * 24,
-        overwrite: true,
-      });
-      ctx.status = 200;
-      ctx.body = {
-        auth: "admin",
-      };
-    } else {
-      ctx.status = 404;
-      ctx.body = {
-        message: "로그인 실패!",
-      };
-    }
-  }
+  const res = await models.Admin.findOne({ where: { email } });
+  ctx.assert(res, 204);
+  const value = hashed(password, res.salt);
+  ctx.assert(value === res.password, 204);
+  const token = await generateToken({ id: res.id });
+  ctx.cookies.set(process.env.ACCESS_TOKEN, token, {
+    maxAge: 1000 * 60 * 60 * 24,
+    overwrite: true,
+  });
+  ctx.status = 200;
+  ctx.body = {
+    auth: "admin",
+  };
 };
 
 /** @swagger
@@ -149,16 +131,17 @@ exports.login = async (ctx) => {
  */
 exports.check = async (ctx) => {
   if (!ctx.request.user) {
-    ctx.status = 200;
-    ctx.body = {
-      message: "Unauthorized admin",
-      auth: false,
-    };
-  } else {
-    const { id } = ctx.request.user;
-    const admin = await models.admin.findOne({ where: { id } });
-    ctx.body = { auth: admin ? "admin" : false };
+    ctx.status = 204;
+    return;
   }
+  const { id } = ctx.request.user;
+  const admin = await models.Admin.findOne({ where: { id } });
+  if (!admin) {
+    ctx.status = 204;
+    return;
+  }
+  ctx.status = 200;
+  ctx.body = { auth: "admin" };
 };
 
 /** @swagger
@@ -215,11 +198,11 @@ exports.check = async (ctx) => {
  */
 exports.register = async (ctx) => {
   const { email, password } = ctx.request.body;
-  const res = await models.admin.findOne({ where: { email } });
-  if (res) return;
+  const res = await models.Admin.findOne({ where: { email } });
+  ctx.assert(!res, 400);
   var salt = genRandomString(16);
   const value = hashed(password, salt);
-  ctx.response.body = await models.admin.create({
+  ctx.response.body = await models.Admin.create({
     email,
     salt,
     password: value,

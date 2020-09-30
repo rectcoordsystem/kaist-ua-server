@@ -1,49 +1,44 @@
-'use strict';
+"use strict";
 module.exports = (sequelize, DataTypes) => {
-  const post = sequelize.define(
-    'post',
+  const Post = sequelize.define(
+    "Post",
     {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      title: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-      author: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-      content: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
+      korAuthor: DataTypes.TEXT,
+      engAuthor: DataTypes.TEXT,
+      korTitle: DataTypes.TEXT,
+      engTitle: DataTypes.TEXT,
+      korContent: DataTypes.TEXT,
+      engContent: DataTypes.TEXT,
       views: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
       },
-      bulletin_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+      isActive: DataTypes.BOOLEAN,
+      isNew: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          const createdAt = this.createdAt;
+          const createdAtDate = new Date(createdAt);
+          const now = new Date();
+          return createdAtDate.getMinutes() > now.getMinutes() - 60 * 24;
+        },
       },
     },
     {
-      underscored: true,
       freezeTableName: true,
-      paranoid: true,
-      charset: 'utf8',
-      collate: 'utf8_general_ci',
-    },
+      charset: "utf8",
+      collate: "utf8_general_ci",
+    }
   );
 
-  post.associate = function (models) {
-    models.post.belongsTo(models.bulletin, {
-      foreignKey: 'bulletin_id',
-      onDelete: 'cascade',
-    });
+  Post.associate = function (models) {
+    models.Post.belongsTo(models.Board, { foreignKey: "boardId" });
   };
 
-  return post;
+  return Post;
 };

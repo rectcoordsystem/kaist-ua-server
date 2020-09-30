@@ -1,27 +1,26 @@
-'use strict';
+"use strict";
 module.exports = (sequelize, DataTypes) => {
-  const banner = sequelize.define(
-    'banner',
+  const Banner = sequelize.define(
+    "Banner",
     {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      url: DataTypes.STRING,
-      link: DataTypes.STRING,
+      image: DataTypes.TEXT,
+      link: DataTypes.TEXT,
+      isActive: DataTypes.BOOLEAN,
     },
     {
-      underscored: true,
-      paranoid: true,
       freezeTableName: true,
-      charset: 'utf8',
-      collate: 'utf8_general_ci',
-    },
+      timestamps: false,
+      charset: "utf8",
+      collate: "utf8_general_ci",
+    }
   );
-  banner.associate = function (models) {
+  Banner.associate = function (models) {
     // associations can be defined here
   };
-  banner.sync({ force: true });
-  return banner;
+  return Banner;
 };

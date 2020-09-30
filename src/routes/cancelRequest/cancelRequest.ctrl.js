@@ -3,89 +3,88 @@ const Op = require("sequelize").Op;
 
 /**
  * POST /cancelRequest
- * {id}
+ * { year, semester }
  */
-exports.write = async (ctx) => {
-  const { id } = ctx.request.body;
-  const res = await models.user.findOne({
+exports.post = async (ctx) => {
+  ctx.assert(ctx.request.user, 401);
+  const { id } = ctx.request.user;
+  const student = await models.Student.findOne({
     where: { id },
-  })
-  if (!res) ctx.body = "No user found";
-  console.log(res.ku_std_no)
-  const { ku_std_no, displayname, ku_kname } = res;
-  await models.cancel_request
-    .create({ id, ku_std_no, displayname, ku_kname })
-    .then((res) => {
-      ctx.body = res;
-    })
-    .catch((err) => {
-      console.log(err);
+  });
+  ctx.assert(student, 401);
+  const { year, semester } = ctx.request.body;
+  const { studentNumber } = student;
+  const res = await models.CancelRequest.findOne({
+    where: {
+      studentNumber,
+      year,
+      semester,
+    },
+  });
+  if (res) {
+    ctx.status = 200;
+    ctx.body = res;
+  } else {
+    const newRequest = await models.CancelRequest.create({
+      studentNumber,
+      year,
+      semester,
     });
+    ctx.assert(newRequest, 400);
+    ctx.status = 204;
+  }
+};
+
+/**
+ * GET /cancelRequest/admin
+ */
+exports.getAll = async (ctx) => {
+  ctx.assert(ctx.request.user, 401);
+  const { id } = ctx.request.user;
+  const admin = await models.Admin.findOne({
+    where: { id },
+  });
+  ctx.assert(admin, 401);
+  const res = await models.CancelRequest.findAll({
+    order: [["ku_std_no", "ASC"]],
+  });
+  ctx.assert(res, 404);
+  ctx.body = res;
 };
 
 /**
  * GET /cancelRequest
  */
 
-exports.list = async (ctx) => {
-  await models.cancel_request
-    .findAll({
-      order: [["ku_std_no", "ASC"]],
-    })
-    .then((res) => {
-      ctx.body = res;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+exports.getOne = async (ctx) => {
+  ctx.assert(ctx.request.user, 401);
+  const { id } = ctx.request.user;
+  const student = await models.Student.findOne({
+    where: { id },
+    include: models.CancelRequest,
+  });
+  ctx.assert(student.CancelRequests, 400);
+
+  ctx.status = 200;
+  ctx.body = student.CancelRequests;
 };
 
 /**
- * GET /cancelRequest/:id
+ * DELETE /cancelRequest
  */
 
-exports.read = async (ctx) => {
-  const { id } = ctx.params;
-
-  await models.cancel_request
-    .findOne({
-      where: { id },
-    })
-    .then((res) => {
-      if (!res)
-        ctx.body = { exists: false };
-      else
-        ctx.body = { exists: true };
-    })
-    .catch((err) => {
-      console.log(err)
-      ctx.body = { exists: false };
-    });
-};
-
-/**
- * DELETE /cancelRequest/:id
- */
-
-exports.remove = async (ctx) => {
-  const { id } = ctx.params;
-
-  await models.cancel_request
-    .destroy({
-      where: { id: id },
-    })
-    .then((res) => {
-      if (!res) {
-        ctx.status = 404;
-        ctx.body = {
-          message: "id가 존재하지 않습니다.",
-        };
-      } else {
-        console.log("cancel request 삭제 성공!");
-        ctx.status = 204;
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+exports.delete = async (ctx) => {
+  ctx.assert(ctx.request.user, 401);
+  const { id } = ctx.request.user;
+  const { year, semester } = ctx.query;
+  ctx.assert(year && semester, 400);
+  const student = await models.Student.findOne({
+    where: { id },
+    include: { model: models.CancelRequest, where: { year, semester } },
+  });
+  if (!student) {
+    ctx.status = 204;
+    return;
+  }
+  ctx.body = student.CancelRequests[0].destroy();
 };

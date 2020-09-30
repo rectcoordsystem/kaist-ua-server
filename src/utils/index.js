@@ -25,7 +25,7 @@ function decodeToken(token) {
 }
 
 async function jwtMiddleware(ctx, next) {
-  const token = ctx.cookies.get("kaistua_web_access_token");
+  const token = ctx.cookies.get(process.env.ACCESS_TOKEN);
   if (!token) return next(); // 토큰이 없으면 바로 다음 작업을 진행합니다.
   try {
     const decoded = await decodeToken(token.toString()); // 토큰을 디코딩 합니다
@@ -35,7 +35,7 @@ async function jwtMiddleware(ctx, next) {
       const { id } = decoded;
       const { generateToken } = require("../routes/auth/generateToken");
       const freshToken = await generateToken({ id });
-      ctx.cookies.set("kaistua_web_access_token", freshToken, {
+      ctx.cookies.set(process.env.ACCESS_TOKEN, freshToken, {
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7days
         httpOnly: true,
       });
