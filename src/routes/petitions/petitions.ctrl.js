@@ -11,7 +11,9 @@ exports.write = async (ctx) => {
   const petition = ctx.request.body;
   const res = await models.Petition.create(petition);
   ctx.assert(res, 400);
-  ctx.status = 204;
+  res.addStudent(student);
+  ctx.body = res;
+  ctx.status = 200;
 };
 
 exports.list = async (ctx) => {
@@ -30,11 +32,14 @@ exports.list = async (ctx) => {
     include: models.Student,
   });
 
+  console.log(petitions);
+
   const petitionCount = await models.Petition.count();
 
   const lastPage = Math.ceil(petitionCount / PAGE_SIZE);
 
   ctx.body = { petitions, lastPage };
+  ctx.status = 200;
 };
 
 exports.read = async (ctx) => {
@@ -47,6 +52,7 @@ exports.read = async (ctx) => {
   });
 
   ctx.body = petitions;
+  ctx.status = 200;
 };
 
 exports.vote = async (ctx) => {
@@ -61,14 +67,24 @@ exports.vote = async (ctx) => {
 
   const petition = await models.Petition.findOne({
     where: { id },
+    include: models.Student,
   });
+  ctx.assert(petition, 400);
+
+  console.log(petition);
+  const exists = petition.Students.some((petitionStudent) => {
+    console.log(petitionStudent.id);
+    console.log(studentId);
+    return petitionStudent.id === studentId;
+  });
+
+  if (exists) {
+    ctx.status = 204;
+    return;
+  }
 
   petition.addStudent(student);
 
-  const result = await Petition.findOne({
-    where: { id },
-    include: models.Student,
-  });
-
-  ctx.body = petition;
+  ctx.body = petition.id;
+  ctx.status = 200;
 };
