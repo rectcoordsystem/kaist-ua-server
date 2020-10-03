@@ -1,24 +1,25 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const Post = sequelize.define(
-    "Post",
+  const Petition = sequelize.define(
+    "Petition",
     {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      korAuthor: DataTypes.TEXT,
-      engAuthor: DataTypes.TEXT,
       korTitle: DataTypes.TEXT,
       engTitle: DataTypes.TEXT,
       korContent: DataTypes.TEXT,
       engContent: DataTypes.TEXT,
-      views: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
+      isActive: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return (
+            new Date(this.createdAt) > Date.now() - 1000 * 60 * 60 * 24 * 14
+          );
+        },
       },
-      isActive: DataTypes.BOOLEAN,
       isNew: {
         type: DataTypes.VIRTUAL,
         get() {
@@ -33,9 +34,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Post.associate = function (models) {
-    models.Post.belongsTo(models.Board, { foreignKey: "boardId" });
+  Petition.associate = function (models) {
+    Petition.belongsToMany(models.Student, { through: "Student_Petition" });
   };
 
-  return Post;
+  return Petition;
 };

@@ -60,30 +60,14 @@ const Op = require("sequelize").Op;
  *          description: Internal Server Error
  */
 exports.write = async (ctx) => {
-  // ctx.assert(ctx.request.user, 401);
-  // const { id } = ctx.request.user;
-  // const admin = await models.Admin.findOne({
-  //   where: { id },
-  // });
-  // ctx.assert(Cadmin, 401);
-  const {
-    author,
-    korTitle,
-    engTitle,
-    korContent,
-    engContent,
-    isActive,
-    boardId,
-  } = ctx.request.body;
-  const post = {
-    author,
-    korTitle,
-    engTitle,
-    korContent,
-    engContent,
-    isActive,
-    boardId: parseInt(boardId),
-  };
+  ctx.assert(ctx.request.user, 401);
+  const { id } = ctx.request.user;
+  const admin = await models.Admin.findOne({
+    where: { id },
+  });
+  ctx.assert(admin, 401);
+  const post = ctx.request.body;
+  post.boardId = parseInt(post.boardId);
   const res = await models.Post.create(post);
   ctx.assert(res, 400);
   ctx.status = 204;
@@ -164,7 +148,7 @@ exports.write = async (ctx) => {
  *          description: Internal Server Error
  */
 exports.list = async (ctx) => {
-  const { page, title, author, boardId } = ctx.request.query;
+  const { page, boardId } = ctx.request.query;
   const POST_NUM_PER_PAGE = 15;
 
   ctx.assert(page > 0, 400);
@@ -172,14 +156,6 @@ exports.list = async (ctx) => {
   const offset = POST_NUM_PER_PAGE * (page - 1);
 
   var where = { boardId: parseInt(boardId) };
-
-  if (author) where.author = author;
-  if (title)
-    where.title = {
-      [Op.like]: `%${title}%`,
-    };
-
-  const body = {}; // Response body
 
   const posts = await models.Post.findAll({
     order: [["createdAt", "DESC"]],
@@ -189,14 +165,13 @@ exports.list = async (ctx) => {
     raw: false,
   });
 
-  body.posts = posts;
-
   const postCount = await models.Post.count({
     where: where,
   });
-  body.lastPage = Math.ceil(postCount / POST_NUM_PER_PAGE);
 
-  ctx.body = body;
+  const lastPage = Math.ceil(postCount / POST_NUM_PER_PAGE);
+
+  ctx.body = { posts, lastPage };
 };
 
 /** @swagger
